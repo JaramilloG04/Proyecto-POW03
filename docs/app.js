@@ -1,6 +1,6 @@
 const root = document.documentElement;
 const themeToggle = document.getElementById('themeToggle');
-const savedTheme = localStorage.getItem('edu-ks-free-theme');
+const savedTheme = localStorage.getItem('edu-kt-free-theme');
 
 function setTheme(theme) {
   root.setAttribute('data-bs-theme', theme);
@@ -12,7 +12,7 @@ function setTheme(theme) {
     themeToggle.title = themeToggle.getAttribute('aria-label');
   }
 
-  localStorage.setItem('edu-ks-free-theme', theme);
+  localStorage.setItem('edu-kt-free-theme', theme);
 }
 
 setTheme(savedTheme || 'light');
