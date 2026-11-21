@@ -1,59 +1,65 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es" data-bs-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="EDU-KT Free: una plataforma comunitaria de tutorías y aprendizaje colaborativo.">
-  <title>EDU-KT Free | Educación comunitaria</title>
+  <!-- 2.4.2 Titulado de páginas: «Página | Sitio», único en cada página -->
+  <title>Educación comunitaria | EDU-KT Free</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <nav class="navbar navbar-expand-lg sticky-top">
+  <!-- 2.4.1 Saltar bloques: primer elemento enfocable de la página -->
+  <a class="skip-link" href="#contenido">Saltar al contenido principal</a>
+  <!-- 3.2.3 Navegación consistente: mismo menú, en el mismo orden, en index, login y registro -->
+  <nav class="navbar navbar-expand-lg sticky-top" aria-label="Navegación principal">
     <div class="container">
       <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
-        <i class="bi bi-people-fill fs-4"></i>
-        EDU-KT Free
+        <i class="bi bi-people-fill fs-4" aria-hidden="true"></i>
+        <span>EDU-KT <span lang="en">Free</span></span>
       </a>
 
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menuPrincipal" aria-controls="menuPrincipal" aria-expanded="false" aria-label="Abrir navegación">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menuPrincipal" aria-controls="menuPrincipal" aria-expanded="false" aria-label="Abrir menú de navegación">
         <span class="navbar-toggler-icon"></span>
       </button>
 
       <div class="collapse navbar-collapse" id="menuPrincipal">
-        <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
+        <ul class="navbar-nav ms-auto align-items-lg-center gap-2 gap-lg-1 pb-3 pb-lg-0">
           <li class="nav-item"><a class="nav-link" href="#como-funciona">Cómo funciona</a></li>
           <li class="nav-item"><a class="nav-link" href="#impacto">Comunidad</a></li>
           <li class="nav-item"><a class="nav-link" href="inicio.html">Explorar tutorías</a></li>
-          <li class="nav-item ms-lg-2"><a class="btn btn-sm btn-outline-primary" href="login.html"><i class="bi bi-box-arrow-in-right me-1"></i>Ingresar</a></li>
-          <li class="nav-item ms-lg-2"><button id="themeToggle" class="btn btn-sm btn-light border" type="button" aria-label="Cambiar a modo oscuro" title="Cambiar tema"><i class="bi bi-moon-stars-fill"></i></button></li>
+          <li class="nav-item ms-lg-2"><a class="btn btn-sm btn-outline-primary" href="login.html"><i class="bi bi-box-arrow-in-right me-1" aria-hidden="true"></i>Ingresar</a></li>
+          <li class="nav-item ms-lg-2"><a class="btn btn-sm btn-primary" href="registro.html"><i class="bi bi-person-plus me-1" aria-hidden="true"></i>Crear cuenta</a></li>
+          <li class="nav-item ms-lg-2"><button id="themeToggle" class="btn btn-sm btn-light border" type="button" aria-label="Cambiar a modo oscuro" title="Cambiar a modo oscuro"><i class="bi bi-moon-stars-fill" aria-hidden="true"></i></button></li>
         </ul>
       </div>
     </div>
   </nav>
 
-  <main>
-    <section class="hero">
+  <main id="contenido" tabindex="-1">
+    <section class="hero" aria-labelledby="hero-titulo">
       <div class="container">
         <div class="row align-items-center g-5">
           <div class="col-lg-7">
-            <span class="badge badge-community rounded-pill px-3 py-2 mb-3"><i class="bi bi-heart-fill me-1"></i>Educación como bien común</span>
-            <h1 class="display-4 fw-bold lh-sm">Aprender y enseñar también es construir comunidad.</h1>
-            <p class="lead mt-4">EDU-KT Free conecta estudiantes y tutores para compartir conocimientos, acompañarse y fortalecer el acceso colectivo a una educación pública y de calidad.</p>
+            <p class="badge badge-community rounded-pill px-3 py-2 mb-3"><i class="bi bi-heart-fill me-1" aria-hidden="true"></i>Educación como bien común</p>
+            <h1 id="hero-titulo" class="display-4 fw-bold lh-sm">Aprender y enseñar también es construir comunidad.</h1>
+            <p class="lead mt-4">EDU-KT <span lang="en">Free</span> conecta estudiantes y tutores para compartir conocimientos, acompañarse y fortalecer el acceso colectivo a una educación pública y de calidad.</p>
             <div class="d-flex flex-wrap gap-3 mt-4">
-              <a href="inicio.html" class="btn btn-light btn-lg px-4 text-primary fw-bold"><i class="bi bi-compass me-2"></i>Explorar la plataforma</a>
-              <a href="registro.html" class="btn btn-outline-light btn-lg px-4">Crear una cuenta</a>
+              <a href="inicio.html" class="btn btn-light btn-lg px-4 fw-bold hero-cta"><i class="bi bi-compass me-2" aria-hidden="true"></i>Explorar tutorías</a>
+              <a href="registro.html" class="btn btn-outline-light btn-lg px-4">Crear cuenta</a>
             </div>
           </div>
 
           <div class="col-lg-5">
             <div class="hero-card p-4 p-md-5">
               <div class="d-flex align-items-center gap-3 mb-4">
-                <div class="avatar">EF</div>
+                <!-- 1.1 Las iniciales son decorativas: el texto de al lado ya identifica a la comunidad -->
+                <div class="avatar" aria-hidden="true">EF</div>
                 <div>
                   <p class="mb-0 fw-bold">Comunidad activa</p>
-                  <small class="text-white-50">Aprendizaje entre pares</small>
+                  <small class="hero-card-muted">Aprendizaje entre pares</small>
                 </div>
               </div>
 
@@ -68,7 +74,7 @@
               </div>
 
               <div class="d-flex gap-3 align-items-center">
-                <i class="bi bi-shield-check fs-3"></i>
+                <i class="bi bi-shield-check fs-3" aria-hidden="true"></i>
                 <p class="mb-0 small">Una red colaborativa donde el conocimiento se comparte, no se mercantiliza.</p>
               </div>
             </div>
@@ -77,58 +83,122 @@
       </div>
     </section>
 
-    <section class="section-space" id="como-funciona">
+    <section class="section-space" id="como-funciona" aria-labelledby="como-funciona-titulo">
       <div class="container">
         <div class="row justify-content-center text-center mb-5">
           <div class="col-lg-8">
             <p class="eyebrow mb-2">Una red horizontal</p>
-            <h2 class="fw-bold">Aprende, comparte y acompaña</h2>
-            <p class="muted-custom mb-0">La plataforma facilita encuentros de tutoría entre pares sin perder de vista la solidaridad, el cuidado y el acceso equitativo al conocimiento.</p>
+            <h2 id="como-funciona-titulo" class="fw-bold">Aprende, comparte y acompaña</h2>
+            <!-- 3.1.3 Palabras inusuales: se define el término clave del proyecto -->
+            <p class="muted-custom mb-0">La plataforma facilita la <dfn id="def-tutoria-pares">tutoría entre pares</dfn>, un acompañamiento en el que estudiantes se enseñan entre sí, sin perder de vista la solidaridad, el cuidado y el acceso equitativo al conocimiento.</p>
           </div>
         </div>
 
-        <div class="row g-4">
-          <div class="col-md-4">
+        <!-- 1.3.1 Los pasos son una secuencia, por eso se marcan como lista ordenada -->
+        <ol class="row g-4 list-unstyled mb-0">
+          <li class="col-md-4">
             <article class="card feature-card h-100 p-4">
-              <div class="icon-circle mb-4"><i class="bi bi-person-vcard"></i></div>
+              <div class="icon-circle mb-4"><i class="bi bi-person-vcard" aria-hidden="true"></i></div>
               <h3 class="h5 fw-bold">1. Crea tu perfil</h3>
               <p class="muted-custom mb-0">Indica qué quieres aprender, las materias que puedes compartir y tus horarios disponibles.</p>
             </article>
-          </div>
-          <div class="col-md-4">
+          </li>
+          <li class="col-md-4">
             <article class="card feature-card h-100 p-4">
-              <div class="icon-circle mb-4"><i class="bi bi-calendar2-check"></i></div>
+              <div class="icon-circle mb-4"><i class="bi bi-calendar2-check" aria-hidden="true"></i></div>
               <h3 class="h5 fw-bold">2. Encuentra una tutoría</h3>
               <p class="muted-custom mb-0">Busca acompañamiento por área de conocimiento y solicita un espacio que se ajuste a tu tiempo.</p>
             </article>
-          </div>
-          <div class="col-md-4">
+          </li>
+          <li class="col-md-4">
             <article class="card feature-card h-100 p-4">
-              <div class="icon-circle mb-4"><i class="bi bi-chat-square-heart"></i></div>
+              <div class="icon-circle mb-4"><i class="bi bi-chat-square-heart" aria-hidden="true"></i></div>
               <h3 class="h5 fw-bold">3. Construye comunidad</h3>
               <p class="muted-custom mb-0">Mantén conversaciones simples con tu tutor o estudiante para preparar cada encuentro.</p>
             </article>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="section-space dashboard-section" id="impacto" aria-labelledby="impacto-titulo">
+      <div class="container">
+        <div class="row align-items-center g-5">
+          <div class="col-lg-6">
+            <p class="eyebrow mb-2">Compromiso colectivo</p>
+            <h2 id="impacto-titulo" class="fw-bold">El conocimiento crece cuando circula libremente.</h2>
+            <p class="muted-custom">EDU-KT <span lang="en">Free</span> es una propuesta de apoyo entre personas. Parte de la idea de que toda persona puede aprender algo y, a la vez, compartir saberes que ayuden a otra.</p>
+            <a href="registro.html" class="btn btn-primary"><i class="bi bi-person-plus me-2" aria-hidden="true"></i>Crear cuenta</a>
+          </div>
+          <div class="col-lg-6">
+            <div class="card dashboard-card p-4">
+              <!-- 1.3.1 Cada cifra se asocia a su descripción con una lista de definiciones -->
+              <dl class="row text-center g-3 mb-0">
+                <div class="col-4 d-flex flex-column">
+                  <dt class="order-2 small muted-custom fw-normal">Apoyo entre pares</dt>
+                  <dd class="order-1 display-6 text-primary fw-bold mb-0"><abbr title="uno a uno">1:1</abbr></dd>
+                </div>
+                <div class="col-4 d-flex flex-column">
+                  <dt class="order-2 small muted-custom fw-normal">Comunidad</dt>
+                  <dd class="order-1 display-6 text-primary fw-bold mb-0">100%</dd>
+                </div>
+                <div class="col-4 d-flex flex-column">
+                  <dt class="order-2 small muted-custom fw-normal">Conocimiento compartido</dt>
+                  <!-- 1.1 El símbolo tiene una alternativa en texto -->
+                  <dd class="order-1 display-6 text-primary fw-bold mb-0"><span aria-hidden="true">∞</span><span class="visually-hidden">Sin límite</span></dd>
+                </div>
+              </dl>
+            </div>
           </div>
         </div>
       </div>
     </section>
 
-    <section class="section-space dashboard-section" id="impacto">
+    <!-- 3.2.6 Ayuda consistente: el enlace «Ayuda» del pie de página lleva aquí desde todas las páginas -->
+    <section class="section-space" id="ayuda" aria-labelledby="ayuda-titulo">
       <div class="container">
-        <div class="row align-items-center g-5">
-          <div class="col-lg-6">
-            <p class="eyebrow mb-2">Compromiso colectivo</p>
-            <h2 class="fw-bold">El conocimiento crece cuando circula libremente.</h2>
-            <p class="muted-custom">EDU-KT Free es una propuesta de apoyo entre personas. Parte de la idea de que toda persona puede aprender algo y, a la vez, compartir saberes que ayuden a otra.</p>
-            <a href="registro.html" class="btn btn-primary"><i class="bi bi-person-plus me-2"></i>Unirme a la red</a>
-          </div>
-          <div class="col-lg-6">
-            <div class="card dashboard-card p-4">
-              <div class="row text-center g-3">
-                <div class="col-4"><p class="display-6 text-primary fw-bold mb-0">1:1</p><small class="muted-custom">Apoyo entre pares</small></div>
-                <div class="col-4"><p class="display-6 text-primary fw-bold mb-0">100%</p><small class="muted-custom">Comunidad</small></div>
-                <div class="col-4"><p class="display-6 text-primary fw-bold mb-0">∞</p><small class="muted-custom">Conocimiento compartido</small></div>
-              </div>
+        <div class="row justify-content-center">
+          <div class="col-lg-8">
+            <div class="text-center mb-4">
+              <p class="eyebrow mb-2">Ayuda</p>
+              <h2 id="ayuda-titulo" class="fw-bold">Preguntas frecuentes</h2>
+            </div>
+            <div class="d-grid gap-3">
+              <details class="faq-item">
+                <summary>¿Qué es una tutoría entre pares?</summary>
+                <p class="muted-custom mt-2 mb-0">Es un acompañamiento en el que una persona estudiante enseña a otra lo que ya sabe. Nadie es «experto» por título: cada quien aporta lo que domina y aprende lo que necesita.</p>
+              </details>
+              <details class="faq-item">
+                <summary>¿Qué significa <span lang="en">Free</span> en el nombre?</summary>
+                <p class="muted-custom mt-2 mb-0"><span lang="en">Free</span> es una palabra en inglés que significa «libre» y «gratuito». Expresa la idea central del proyecto: el conocimiento se comparte, no se vende.</p>
+              </details>
+              <details class="faq-item">
+                <summary>¿Cómo solicito una tutoría?</summary>
+                <ol class="muted-custom mt-2 mb-0">
+                  <li>Ingresa con tu correo institucional.</li>
+                  <li>En «Mi panel», busca la sección «Tutorías disponibles».</li>
+                  <li>Pulsa «Solicitar tutoría» junto a la persona que quieres que te acompañe.</li>
+                  <li>Escribe el tema y un mensaje corto, y pulsa «Enviar solicitud».</li>
+                </ol>
+              </details>
+              <!-- 2.1 Accesible por teclado: se documenta cómo usar el sitio sin mouse -->
+              <details class="faq-item">
+                <summary>¿Puedo usar el sitio solo con el teclado?</summary>
+                <div class="muted-custom mt-2">
+                  <p class="mb-2">Sí. Todas las funciones se pueden usar sin mouse:</p>
+                  <ul class="mb-2">
+                    <li><kbd>Tab</kbd> avanza al siguiente enlace, botón o campo, y <kbd>Mayús</kbd> + <kbd>Tab</kbd> regresa al anterior.</li>
+                    <li><kbd>Enter</kbd> abre enlaces y activa botones; <kbd>Espacio</kbd> también activa botones y marca casillas.</li>
+                    <li><kbd>Esc</kbd> cierra las ventanas emergentes y los mensajes de confirmación.</li>
+                    <li>Al presionar <kbd>Tab</kbd> por primera vez aparece el enlace «Saltar al contenido principal», que evita recorrer todo el menú.</li>
+                  </ul>
+                  <p class="mb-0">El sitio no usa atajos de una sola tecla, así que no interfiere con los atajos de tu lector de pantalla.</p>
+                </div>
+              </details>
+              <details class="faq-item">
+                <summary>¿Se guardan mis datos?</summary>
+                <p class="muted-custom mt-2 mb-0">No. Esta versión es una demostración académica: los datos que escribes no se envían a ningún servidor y solo se conservan mientras tengas abierta la pestaña del navegador.</p>
+              </details>
             </div>
           </div>
         </div>
@@ -138,8 +208,16 @@
 
   <footer class="footer py-4">
     <div class="container d-flex flex-wrap justify-content-between align-items-center gap-3">
-      <div><strong class="text-white">EDU-KT Free</strong><span class="ms-2 small">Educación colaborativa y acceso comunitario.</span></div>
-      <div class="small"><a href="index.html">Inicio</a><span class="mx-2">·</span><a href="registro.html">Registro</a><span class="mx-2">·</span><a href="inicio.html">Plataforma</a></div>
+      <p class="mb-0"><strong class="text-white">EDU-KT <span lang="en">Free</span></strong><span class="ms-2 small">Educación colaborativa y acceso comunitario.</span></p>
+      <nav aria-label="Enlaces del pie de página">
+        <ul class="footer-links small">
+          <li><a href="index.html">Inicio</a></li>
+          <li><a href="inicio.html">Explorar tutorías</a></li>
+          <li><a href="login.html">Ingresar</a></li>
+          <li><a href="registro.html">Crear cuenta</a></li>
+          <li><a href="#ayuda"><i class="bi bi-question-circle me-1" aria-hidden="true"></i>Ayuda</a></li>
+        </ul>
+      </nav>
     </div>
   </footer>
 
