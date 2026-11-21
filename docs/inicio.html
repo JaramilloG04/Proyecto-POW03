@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es" data-bs-theme="light">
 <head>
   <meta charset="utf-8">
@@ -10,73 +10,118 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <nav class="navbar navbar-expand-lg sticky-top">
+  <!-- 2.4.1 Saltar bloques: primer elemento enfocable de la página -->
+  <a class="skip-link" href="#contenido">Saltar al contenido principal</a>
+  <!-- 3.2.3 Navegación consistente: mismo menú, en el mismo orden, en inicio y perfil -->
+  <nav class="navbar navbar-expand-lg sticky-top" aria-label="Navegación principal">
     <div class="container">
-      <a class="navbar-brand d-flex align-items-center gap-2" href="index.html"><i class="bi bi-people-fill fs-4"></i>EDU-KT Free</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menuPrincipal" aria-controls="menuPrincipal" aria-expanded="false" aria-label="Abrir navegación"><span class="navbar-toggler-icon"></span></button>
+      <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
+        <i class="bi bi-people-fill fs-4" aria-hidden="true"></i>
+        <span>EDU-KT <span lang="en">Free</span></span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menuPrincipal" aria-controls="menuPrincipal" aria-expanded="false" aria-label="Abrir menú de navegación"><span class="navbar-toggler-icon"></span></button>
       <div class="collapse navbar-collapse" id="menuPrincipal">
-        <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
-          <li class="nav-item"><a class="nav-link active" href="inicio.html">Mi panel</a></li>
+        <ul class="navbar-nav ms-auto align-items-lg-center gap-2 gap-lg-1 pb-3 pb-lg-0">
+          <li class="nav-item"><a class="nav-link active" href="inicio.html" aria-current="page">Mi panel</a></li>
           <li class="nav-item"><a class="nav-link" href="perfil.html">Mi perfil</a></li>
           <li class="nav-item"><a class="nav-link" href="index.html">Cerrar sesión</a></li>
-          <li class="nav-item ms-lg-2"><button id="themeToggle" class="btn btn-sm btn-light border" type="button" aria-label="Cambiar a modo oscuro" title="Cambiar tema"><i class="bi bi-moon-stars-fill"></i></button></li>
+          <li class="nav-item ms-lg-2"><button id="themeToggle" class="btn btn-sm btn-light border" type="button" aria-label="Cambiar a modo oscuro" title="Cambiar a modo oscuro"><i class="bi bi-moon-stars-fill" aria-hidden="true"></i></button></li>
         </ul>
       </div>
     </div>
   </nav>
 
-  <main class="dashboard-section min-vh-100 py-5">
+  <main id="contenido" tabindex="-1" class="dashboard-section min-vh-100 py-5">
     <div class="container">
       <div class="d-flex flex-wrap align-items-end justify-content-between gap-3 mb-4">
-        <div><p class="eyebrow mb-2">Vista previa navegable</p><h1 class="h2 fw-bold mb-0">Tu espacio en EDU-KT Free</h1></div>
-        <a class="btn btn-primary" href="#tutorias"><i class="bi bi-plus-lg me-2"></i>Solicitar tutoría</a>
+        <div><p class="eyebrow mb-2">Vista previa navegable</p><h1 class="h2 fw-bold mb-0">Tu espacio en EDU-KT <span lang="en">Free</span></h1></div>
+        <!-- 3.2.4 Identificación consistente: todos los botones «Solicitar tutoría» hacen lo mismo (abren el formulario) -->
+        <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#solicitudModal"><i class="bi bi-plus-lg me-2" aria-hidden="true"></i>Solicitar tutoría</button>
       </div>
 
       <div class="row g-4">
         <aside class="col-lg-3">
           <div class="bg-white dashboard-card p-3 side-menu h-100">
             <div class="d-flex align-items-center gap-3 border-bottom pb-3 mb-3">
-              <div class="avatar">JC</div>
+              <div class="avatar" aria-hidden="true">JC</div>
               <div><p class="fw-bold mb-0">Juan Camilo</p><small class="muted-custom">Estudiante y tutor</small></div>
             </div>
-            <nav class="nav flex-column" aria-label="Navegación del panel">
-              <a class="nav-link active" href="#resumen"><i class="bi bi-grid-1x2 me-2"></i>Resumen</a>
-              <a class="nav-link" href="#tutorias"><i class="bi bi-calendar-week me-2"></i>Tutorías</a>
-              <a class="nav-link" href="#disponibilidad"><i class="bi bi-clock me-2"></i>Disponibilidad</a>
-              <a class="nav-link" href="#mensajes"><i class="bi bi-chat-dots me-2"></i>Mensajes <span class="badge text-bg-primary float-end">2</span></a>
-              <a class="nav-link" href="perfil.html"><i class="bi bi-person-gear me-2"></i>Mi perfil</a>
+            <nav class="nav flex-column" id="panelNav" aria-label="Secciones del panel">
+              <!-- 4.1.2 La sección actual se comunica con aria-current, no solo con estilo (se actualiza en app.js) -->
+              <a class="nav-link active" href="#resumen" aria-current="location"><i class="bi bi-grid-1x2 me-2" aria-hidden="true"></i>Resumen</a>
+              <a class="nav-link" href="#tutorias"><i class="bi bi-calendar-week me-2" aria-hidden="true"></i>Tutorías</a>
+              <a class="nav-link" href="#disponibilidad"><i class="bi bi-clock me-2" aria-hidden="true"></i>Disponibilidad</a>
+              <!-- 1.1 El número del distintivo tiene texto alternativo -->
+              <a class="nav-link" href="#mensajes"><i class="bi bi-chat-dots me-2" aria-hidden="true"></i>Mensajes <span class="badge text-bg-primary float-end">2<span class="visually-hidden"> mensajes nuevos</span></span></a>
+              <a class="nav-link" href="perfil.html"><i class="bi bi-person-gear me-2" aria-hidden="true"></i>Mi perfil</a>
             </nav>
           </div>
         </aside>
 
         <div class="col-lg-9">
-          <section id="resumen" class="mb-4">
+          <section id="resumen" class="mb-4" aria-labelledby="resumen-titulo">
+            <!-- 1.3.1 Encabezado oculto visualmente para que la sección tenga nombre y la jerarquía h1 > h2 sea completa -->
+            <h2 id="resumen-titulo" class="visually-hidden">Resumen de tu actividad</h2>
             <div class="row g-3">
-              <div class="col-md-4"><div class="card dashboard-card p-3 h-100"><small class="muted-custom">Tutorías este mes</small><p class="display-6 fw-bold text-primary mb-0">04</p><small class="text-success"><i class="bi bi-arrow-up-right"></i> Dos completadas</small></div></div>
-              <div class="col-md-4"><div class="card dashboard-card p-3 h-100"><small class="muted-custom">Horas compartidas</small><p class="display-6 fw-bold text-primary mb-0">06 h</p><small class="muted-custom">Aporte a la comunidad</small></div></div>
+              <div class="col-md-4"><div class="card dashboard-card p-3 h-100"><small class="muted-custom">Tutorías este mes</small><p class="display-6 fw-bold text-primary mb-0">04</p><small class="text-success"><i class="bi bi-arrow-up-right" aria-hidden="true"></i> Dos completadas</small></div></div>
+              <div class="col-md-4"><div class="card dashboard-card p-3 h-100"><small class="muted-custom">Horas compartidas</small><p class="display-6 fw-bold text-primary mb-0">06 <abbr title="horas">h</abbr></p><small class="muted-custom">Aporte a la comunidad</small></div></div>
               <div class="col-md-4"><div class="card dashboard-card p-3 h-100"><small class="muted-custom">Próximo encuentro</small><p class="h5 fw-bold mb-1">Matemáticas</p><small class="muted-custom">Hoy · 4:00 p. m.</small></div></div>
             </div>
           </section>
 
-          <section id="tutorias" class="card dashboard-card mb-4">
+          <section id="tutorias" class="card dashboard-card mb-4" aria-labelledby="tutorias-titulo">
             <div class="card-body p-4">
               <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
-                <div><h2 class="h5 fw-bold mb-1">Tutorías disponibles</h2><p class="muted-custom mb-0">Encuentra acompañamiento dentro de la comunidad.</p></div>
-                <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#solicitudModal"><i class="bi bi-plus-lg me-1"></i>Solicitar tutoría</button>
+                <div><h2 id="tutorias-titulo" class="h5 fw-bold mb-1">Tutorías disponibles</h2><p class="muted-custom mb-0">Encuentra acompañamiento dentro de la comunidad.</p></div>
+                <button class="btn btn-sm btn-outline-primary" type="button" data-bs-toggle="modal" data-bs-target="#solicitudModal"><i class="bi bi-plus-lg me-1" aria-hidden="true"></i>Solicitar tutoría</button>
               </div>
-              <div class="row g-3">
-                <div class="col-md-6"><article class="border rounded-4 p-3 h-100"><div class="d-flex align-items-center gap-3"><div class="avatar">LM</div><div><h3 class="h6 fw-bold mb-0">Laura Martínez</h3><small class="muted-custom">Cálculo y álgebra lineal</small></div></div><p class="small muted-custom mt-3 mb-2"><i class="bi bi-calendar3 me-1"></i>Miércoles y viernes · 3:00–5:00 p. m.</p><button class="btn btn-primary btn-sm solicitar-btn" type="button" data-tutor="Laura Martínez">Solicitar espacio</button></article></div>
-                <div class="col-md-6"><article class="border rounded-4 p-3 h-100"><div class="d-flex align-items-center gap-3"><div class="avatar avatar-green">DV</div><div><h3 class="h6 fw-bold mb-0">David Velasco</h3><small class="muted-custom">HTML, CSS y JavaScript</small></div></div><p class="small muted-custom mt-3 mb-2"><i class="bi bi-calendar3 me-1"></i>Martes y jueves · 5:00–7:00 p. m.</p><button class="btn btn-primary btn-sm solicitar-btn" type="button" data-tutor="David Velasco">Solicitar espacio</button></article></div>
-              </div>
+              <ul class="row g-3 list-unstyled mb-0">
+                <li class="col-md-6">
+                  <article class="border rounded-4 p-3 h-100">
+                    <div class="d-flex align-items-center gap-3"><div class="avatar" aria-hidden="true">LM</div><div><h3 class="h6 fw-bold mb-0">Laura Martínez</h3><small class="muted-custom">Cálculo y álgebra lineal</small></div></div>
+                    <p class="small muted-custom mt-3 mb-2"><i class="bi bi-calendar3 me-1" aria-hidden="true"></i>Miércoles y viernes · 3:00–5:00 p. m.</p>
+                    <button class="btn btn-primary btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#solicitudModal" data-tutor="Laura Martínez">Solicitar tutoría<span class="visually-hidden"> con Laura Martínez</span></button>
+                  </article>
+                </li>
+                <li class="col-md-6">
+                  <article class="border rounded-4 p-3 h-100">
+                    <div class="d-flex align-items-center gap-3"><div class="avatar avatar-green" aria-hidden="true">DV</div><div><h3 class="h6 fw-bold mb-0">David Velasco</h3><small class="muted-custom">HTML, CSS y JavaScript</small></div></div>
+                    <p class="small muted-custom mt-3 mb-2"><i class="bi bi-calendar3 me-1" aria-hidden="true"></i>Martes y jueves · 5:00–7:00 p. m.</p>
+                    <button class="btn btn-primary btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#solicitudModal" data-tutor="David Velasco">Solicitar tutoría<span class="visually-hidden"> con David Velasco</span></button>
+                  </article>
+                </li>
+              </ul>
             </div>
           </section>
 
           <div class="row g-4">
-            <section class="col-md-6" id="disponibilidad">
-              <div class="card dashboard-card h-100"><div class="card-body p-4"><div class="d-flex justify-content-between align-items-center mb-3"><h2 class="h5 fw-bold mb-0">Mi disponibilidad</h2><button class="btn btn-sm btn-link text-primary fw-bold p-0" type="button" id="addSchedule">Editar</button></div><div id="scheduleList" class="d-grid gap-2"><div class="schedule-slot">Lunes · 2:00–4:00 p. m.</div><div class="schedule-slot">Miércoles · 10:00 a. m.–12:00 m.</div></div></div></div>
+            <section class="col-md-6" id="disponibilidad" aria-labelledby="disponibilidad-titulo">
+              <div class="card dashboard-card h-100">
+                <div class="card-body p-4">
+                  <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+                    <h2 id="disponibilidad-titulo" class="h5 fw-bold mb-0">Mi disponibilidad</h2>
+                    <!-- 3.2 Predecible: el botón dice exactamente lo que hace -->
+                    <button class="btn btn-sm btn-outline-primary" type="button" id="addSchedule"><i class="bi bi-plus-lg me-1" aria-hidden="true"></i>Agregar horario</button>
+                  </div>
+                  <ul id="scheduleList" class="d-grid gap-2 list-unstyled mb-0">
+                    <li class="schedule-slot">Lunes · 2:00–4:00 p. m.</li>
+                    <li class="schedule-slot">Miércoles · 10:00 a. m.–12:00 m.</li>
+                  </ul>
+                </div>
+              </div>
             </section>
-            <section class="col-md-6" id="mensajes">
-              <div class="card dashboard-card h-100"><div class="card-body p-4"><div class="d-flex justify-content-between align-items-center mb-2"><h2 class="h5 fw-bold mb-0">Mensajes</h2><span class="badge text-bg-primary">2 nuevos</span></div><div class="message-item"><div class="d-flex justify-content-between"><strong class="small">Laura Martínez</strong><small class="muted-custom">10:20</small></div><p class="small muted-custom mb-0">¡Hola! Confirmo nuestra tutoría para hoy.</p></div><div class="message-item"><div class="d-flex justify-content-between"><strong class="small">David Velasco</strong><small class="muted-custom">Ayer</small></div><p class="small muted-custom mb-0">Te comparto el recurso para practicar CSS.</p></div><button class="btn btn-sm btn-outline-primary mt-3" type="button" id="viewMessages">Ver conversación</button></div></div>
+            <section class="col-md-6" id="mensajes" aria-labelledby="mensajes-titulo">
+              <div class="card dashboard-card h-100">
+                <div class="card-body p-4">
+                  <div class="d-flex justify-content-between align-items-center mb-2"><h2 id="mensajes-titulo" class="h5 fw-bold mb-0">Mensajes</h2><span class="badge text-bg-primary">2 nuevos</span></div>
+                  <ul class="list-unstyled mb-0">
+                    <li class="message-item"><div class="d-flex justify-content-between"><strong class="small">Laura Martínez</strong><small class="muted-custom">10:20</small></div><p class="small muted-custom mb-0">¡Hola! Confirmo nuestra tutoría para hoy.</p></li>
+                    <li class="message-item"><div class="d-flex justify-content-between"><strong class="small">David Velasco</strong><small class="muted-custom">Ayer</small></div><p class="small muted-custom mb-0">Te comparto el recurso para practicar CSS.</p></li>
+                  </ul>
+                  <button class="btn btn-sm btn-outline-primary mt-3" type="button" id="viewMessages" aria-describedby="mensajesNota">Ver conversación</button>
+                  <p id="mensajesNota" class="small muted-custom mt-2 mb-0">La mensajería completa llegará en la próxima fase del proyecto.</p>
+                </div>
+              </div>
             </section>
           </div>
         </div>
@@ -84,9 +129,49 @@
     </div>
   </main>
 
-  <div class="modal fade" id="solicitudModal" tabindex="-1" aria-labelledby="solicitudModalLabel" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow"><div class="modal-header border-0"><h2 class="modal-title fs-5 fw-bold" id="solicitudModalLabel">Solicitar una tutoría</h2><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button></div><form id="requestForm"><div class="modal-body pt-0"><div class="mb-3"><label class="form-label" for="subjectRequest">Tema que deseas reforzar</label><input id="subjectRequest" class="form-control" placeholder="Ej. Límites y derivadas" required></div><div class="mb-3"><label class="form-label" for="detailRequest">Mensaje para el tutor</label><textarea id="detailRequest" class="form-control" rows="3" placeholder="Cuéntale brevemente qué necesitas." required></textarea></div></div><div class="modal-footer border-0"><button type="submit" class="btn btn-primary w-100">Enviar solicitud</button></div></form></div></div></div>
+  <footer class="footer py-4">
+    <div class="container d-flex flex-wrap justify-content-between align-items-center gap-3">
+      <p class="mb-0"><strong class="text-white">EDU-KT <span lang="en">Free</span></strong><span class="ms-2 small">Educación colaborativa y acceso comunitario.</span></p>
+      <nav aria-label="Enlaces del pie de página">
+        <ul class="footer-links small">
+          <li><a href="index.html">Inicio</a></li>
+          <li><a href="inicio.html">Explorar tutorías</a></li>
+          <li><a href="login.html">Ingresar</a></li>
+          <li><a href="registro.html">Crear cuenta</a></li>
+          <li><a href="index.html#ayuda"><i class="bi bi-question-circle me-1" aria-hidden="true"></i>Ayuda</a></li>
+        </ul>
+      </nav>
+    </div>
+  </footer>
 
-  <div class="toast-container position-fixed bottom-0 end-0 p-3"><div id="feedbackToast" class="toast align-items-center text-bg-primary border-0" role="status" aria-live="polite" aria-atomic="true"><div class="d-flex"><div class="toast-body" id="toastMessage">Acción realizada.</div><button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Cerrar"></button></div></div></div>
+  <div class="modal fade" id="solicitudModal" tabindex="-1" aria-labelledby="solicitudModalLabel">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow">
+        <div class="modal-header border-0"><h2 class="modal-title fs-5 fw-bold" id="solicitudModalLabel">Solicitar una tutoría</h2><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button></div>
+        <form id="requestForm" novalidate>
+          <div class="modal-body pt-0">
+            <p class="small muted-custom">Todos los campos son obligatorios.</p>
+            <div class="alert alert-danger form-error-summary" role="alert" hidden></div>
+            <div class="mb-3">
+              <label class="form-label" for="subjectRequest">Tema que deseas reforzar</label>
+              <input id="subjectRequest" name="subject" class="form-control" type="text" required aria-describedby="subjectRequestHelp">
+              <div id="subjectRequestHelp" class="form-text">Ejemplo: límites y derivadas.</div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label" for="detailRequest">Mensaje para el tutor</label>
+              <textarea id="detailRequest" name="detail" class="form-control" rows="3" minlength="10" required aria-describedby="detailRequestHelp"></textarea>
+              <div id="detailRequestHelp" class="form-text">Cuéntale brevemente qué necesitas (mínimo 10 caracteres).</div>
+            </div>
+          </div>
+          <div class="modal-footer border-0"><button type="submit" class="btn btn-primary w-100">Enviar solicitud</button></div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-container position-fixed bottom-0 end-0 p-3"><div id="feedbackToast" class="toast align-items-center text-bg-primary border-0"><div class="d-flex"><div class="toast-body" id="toastMessage">Acción realizada.</div><button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Cerrar mensaje"></button></div></div></div>
+  <!-- 4.1.3 Mensajes de estado: región siempre presente que anuncia las confirmaciones sin mover el foco -->
+  <div id="statusMessage" class="visually-hidden" role="status" aria-live="polite" aria-atomic="true"></div>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="app.js"></script>
 </body>
