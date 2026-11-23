@@ -1,0 +1,82 @@
+[
+  {
+    "nombre": "Miguel Angel Delgado",
+    "correo": "miguel.delgado@usc.edu.co",
+    "rol": "admin",
+    "programa": "Ingeniería de Sistemas",
+    "institucion": "Universidad Santiago de Cali",
+    "temasCompartir": ["Arquitectura Web", "Node.js", "Bases de Datos NoSQL"],
+    "temasAprender": ["Seguridad en la Nube", "DevOps"],
+    "biografia": "Coordinador de la red comunitaria EDU-KT Free y tutor par en desarrollo backend.",
+    "disponibilidad": ["Lunes · 4:00–6:00 p. m.", "Jueves · 2:00–4:00 p. m."],
+    "bancoHoras": {
+      "horasOfrecidas": 8,
+      "horasRecibidas": 2,
+      "saldoHoras": 8
+    }
+  },
+  {
+    "nombre": "Laura Martínez",
+    "correo": "laura.martinez@usc.edu.co",
+    "rol": "tutor",
+    "programa": "Ingeniería Industrial",
+    "institucion": "Universidad Santiago de Cali",
+    "temasCompartir": ["Cálculo diferencial", "Álgebra lineal", "Estadística"],
+    "temasAprender": ["Python para análisis de datos"],
+    "biografia": "Estudiante de séptimo semestre interesada en fortalecer el aprendizaje colaborativo en ciencias básicas.",
+    "disponibilidad": ["Miércoles · 3:00–5:00 p. m.", "Viernes · 3:00–5:00 p. m."],
+    "bancoHoras": {
+      "horasOfrecidas": 6,
+      "horasRecibidas": 1,
+      "saldoHoras": 7
+    }
+  },
+  {
+    "nombre": "David Velasco",
+    "correo": "david.velasco@usc.edu.co",
+    "rol": "tutor",
+    "programa": "Ingeniería de Sistemas",
+    "institucion": "Universidad Santiago de Cali",
+    "temasCompartir": ["HTML5 semántico", "CSS3 y diseño responsivo", "JavaScript"],
+    "temasAprender": ["Cálculo integral", "Inglés conversacional"],
+    "biografia": "Entusiasta del desarrollo frontend accesible (WCAG 2.2) y el software libre.",
+    "disponibilidad": ["Martes · 5:00–7:00 p. m.", "Jueves · 5:00–7:00 p. m."],
+    "bancoHoras": {
+      "horasOfrecidas": 5,
+      "horasRecibidas": 2,
+      "saldoHoras": 5
+    }
+  },
+  {
+    "nombre": "Juan Camilo Jaramillo",
+    "correo": "juan.jaramillo@usc.edu.co",
+    "rol": "ambos",
+    "programa": "Programación Web",
+    "institucion": "Universidad Santiago de Cali",
+    "temasCompartir": ["HTML, CSS y fundamentos web"],
+    "temasAprender": ["JavaScript", "Cálculo diferencial", "Inglés"],
+    "biografia": "Me interesa compartir conocimientos y aprender en comunidad.",
+    "disponibilidad": ["Lunes · 2:00–4:00 p. m.", "Miércoles · 10:00 a. m.–12:00 m."],
+    "bancoHoras": {
+      "horasOfrecidas": 6,
+      "horasRecibidas": 4,
+      "saldoHoras": 4
+    }
+  },
+  {
+    "nombre": "Sofía Ríos",
+    "correo": "sofia.rios@usc.edu.co",
+    "rol": "estudiante",
+    "programa": "Licenciatura en Educación",
+    "institucion": "Universidad Santiago de Cali",
+    "temasCompartir": [],
+    "temasAprender": ["Matemáticas básicas", "Herramientas digitales", "Estadística"],
+    "biografia": "Estudiante de primeros semestres buscando acompañamiento en matemáticas y tecnología.",
+    "disponibilidad": ["Viernes · 9:00–11:00 a. m."],
+    "bancoHoras": {
+      "horasOfrecidas": 0,
+      "horasRecibidas": 2,
+      "saldoHoras": 2
+    }
+  }
+]
