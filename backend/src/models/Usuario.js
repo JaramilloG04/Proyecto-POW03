@@ -2,6 +2,12 @@ import mongoose from "mongoose";
 
 const usuarioSchema = new mongoose.Schema(
   {
+    entraId: {
+      type: String,
+      trim: true,
+      index: true,
+      default: null
+    },
     nombre: {
       type: String,
       required: [true, "El nombre completo es obligatorio"],
@@ -9,7 +15,7 @@ const usuarioSchema = new mongoose.Schema(
     },
     correo: {
       type: String,
-      required: [true, "El correo institucional es obligatorio"],
+      required: [true, "El correo es obligatorio"],
       unique: true,
       lowercase: true,
       trim: true

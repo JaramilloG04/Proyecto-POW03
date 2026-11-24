@@ -3,7 +3,7 @@
     "titulo": "Cálculo y álgebra lineal",
     "area": "Ciencias Básicas",
     "descripcion": "Acompañamiento práctico en límites, derivadas, sistemas de ecuaciones lineales y matrices para primeros semestres.",
-    "tutorCorreo": "laura.martinez@usc.edu.co",
+    "tutorCorreo": "pablo02colonia@edukt.edu.co",
     "horario": "Miércoles y viernes · 3:00–5:00 p. m.",
     "modalidad": "Virtual",
     "duracionHoras": 2,
@@ -14,7 +14,7 @@
     "titulo": "HTML, CSS y JavaScript",
     "area": "Programación Web",
     "descripcion": "Tutoría entre pares sobre maquetación semántica, diseño responsivo con Bootstrap y manipulación del DOM con JavaScript.",
-    "tutorCorreo": "david.velasco@usc.edu.co",
+    "tutorCorreo": "pablo02colonia@edukt.edu.co",
     "horario": "Martes y jueves · 5:00–7:00 p. m.",
     "modalidad": "Virtual",
     "duracionHoras": 2,
@@ -25,22 +25,11 @@
     "titulo": "Desarrollo Backend con Node.js y MongoDB",
     "area": "Ingeniería de Software",
     "descripcion": "Diseño de APIs REST con Express, modelado de esquemas en Mongoose y buenas prácticas de seguridad.",
-    "tutorCorreo": "miguel.delgado@usc.edu.co",
+    "tutorCorreo": "miguel01delgado@edukt.edu.co",
     "horario": "Lunes y jueves · 4:00–6:00 p. m.",
     "modalidad": "Híbrida",
     "duracionHoras": 2,
     "cuposDisponibles": 3,
     "estado": "disponible"
-  },
-  {
-    "titulo": "Matemáticas básicas y lógica",
-    "area": "Ciencias Básicas",
-    "descripcion": "Refuerzo en aritmética, factorización y resolución de problemas aplicados para ingreso universitario.",
-    "tutorCorreo": "laura.martinez@usc.edu.co",
-    "horario": "Hoy · 4:00 p. m.",
-    "modalidad": "Presencial",
-    "duracionHoras": 1,
-    "cuposDisponibles": 2,
-    "estado": "completada"
   }
 ]

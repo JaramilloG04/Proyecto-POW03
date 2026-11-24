@@ -3,13 +3,13 @@ import express from "express";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { conectarDB } from "./config/db.js";
+import authRoutes from "./routes/auth.routes.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
 
-// Middleware: Habilitar CORS
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
@@ -20,18 +20,15 @@ app.use((req, res, next) => {
   next();
 });
 
-// Middleware: permite leer el cuerpo de las peticiones en formato JSON
 app.use(express.json());
-
-// Servir archivos estáticos de la interfaz Front-End
 app.use(express.static(path.join(__dirname, "../../frontend")));
 
-// Ruta de prueba/salud de la API
 app.get("/api/health", (req, res) => {
   res.json({ mensaje: "API de EDU-KT Free funcionando" });
 });
 
-// Middleware para rutas inexistentes
+app.use("/api/auth", authRoutes);
+
 app.use((req, res) => {
   res.status(404).json({ mensaje: "Ruta no encontrada" });
 });

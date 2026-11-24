@@ -536,6 +536,17 @@ dfn {
   }
 }
 
+html[data-auth-state="guest"] a[href="inicio.html"],
+html[data-auth-state="guest"] li:has(> a[href="inicio.html"]) {
+  display: none !important;
+}
+
+html[data-auth-state="authenticated"] a[href="registro.html"],
+html[data-auth-state="authenticated"] li:has(> a[href="registro.html"]),
+html[data-auth-state="authenticated"] .footer-links li:has(> a[href="login.html"]) {
+  display: none !important;
+}
+
 /* 2.3 Convulsiones y reacciones físicas: si el sistema pide reducir el movimiento, se quitan
    las animaciones y transiciones no esenciales (incluido el desplazamiento de las tarjetas). */
 @media (prefers-reduced-motion: reduce) {

@@ -90,6 +90,8 @@ function notify(message) {
   }
 }
 
+window.notify = notify;
+
 // 2.1 Esc cierra el mensaje. Se escucha en fase de captura para saber si había un modal
 // abierto antes de que Bootstrap lo cierre: en ese caso Esc solo cierra el modal.
 document.addEventListener('keydown', (event) => {

@@ -7,7 +7,7 @@ import Solicitud from "./models/Solicitud.js";
 
 async function leerJSON(ruta) {
   const contenido = await readFile(new URL(ruta, import.meta.url), "utf-8");
-  return JSON.parse(contenido);
+  return JSON.parse(contenido.replace(/^\uFEFF/, ""));
 }
 
 async function seed() {
@@ -33,21 +33,12 @@ async function seed() {
   const solicitudesIniciales = [
     {
       tutoria: tutoriasInsertadas[0]._id,
-      estudiante: usuarioPorCorreo["juan.jaramillo@usc.edu.co"]._id,
-      tutor: usuarioPorCorreo["laura.martinez@usc.edu.co"]._id,
+      estudiante: usuarioPorCorreo["camilo03jaramillo@edukt.edu.co"]._id,
+      tutor: usuarioPorCorreo["pablo02colonia@edukt.edu.co"]._id,
       temaReforzar: "Límites y derivadas",
-      mensaje: "¡Hola! Confirmo nuestra tutoría para repasar límites trigonométricos hoy.",
+      mensaje: "¡Hola Pablo! Confirmo nuestra tutoría para repasar límites hoy.",
       horasComprometidas: 1,
       estado: "aceptada"
-    },
-    {
-      tutoria: tutoriasInsertadas[1]._id,
-      estudiante: usuarioPorCorreo["sofia.rios@usc.edu.co"]._id,
-      tutor: usuarioPorCorreo["david.velasco@usc.edu.co"]._id,
-      temaReforzar: "Maquetación con Flexbox y Grid",
-      mensaje: "Hola David, necesito apoyo con el diseño responsivo de mi proyecto web.",
-      horasComprometidas: 1,
-      estado: "pendiente"
     }
   ];
 
