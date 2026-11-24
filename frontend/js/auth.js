@@ -1,7 +1,3 @@
-﻿// ============================================================
-// Autenticación y Autorización con Microsoft Entra ID (MSAL.js)
-// ============================================================
-
 const TOKEN_STORAGE_KEY = "edu-kt-free-id-token";
 const USER_STORAGE_KEY = "edu-kt-free-user";
 const PAGINAS_PROTEGIDAS = ["inicio.html", "perfil.html"];
@@ -35,7 +31,7 @@ function sincronizarEstadoDomDeSesion() {
   }
 }
 
-// Ejecución inmediata para evitar parpadeos (FOUC) de botones al recargar la página
+// Se ejecuta de forma síncrona antes de renderizar el DOM para evitar parpadeos de elementos restringidos
 sincronizarEstadoDomDeSesion();
 
 let msalInstance = null;
@@ -133,6 +129,35 @@ export async function iniciarSesionConMicrosoft() {
   return await sincronizarPerfilConBackend(resultado.idToken);
 }
 
+export async function registrarCuentaConMicrosoft({ nombre, rol }) {
+  const msalApp = await obtenerInstanciaMsal();
+  const resultado = await msalApp.loginPopup({
+    scopes: ["openid", "profile", "email"],
+    prompt: "select_account"
+  });
+
+  if (!resultado || !resultado.idToken) {
+    throw new Error("No se recibió un token de identidad de Microsoft Entra ID");
+  }
+
+  const respuesta = await fetch("/api/auth/registro", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${resultado.idToken}`
+    },
+    body: JSON.stringify({ nombre, rol })
+  });
+
+  const datos = await respuesta.json();
+  if (!respuesta.ok) {
+    throw new Error(datos.mensaje || "Error al crear la cuenta");
+  }
+
+  guardarUsuarioEnStorage(datos, resultado.idToken);
+  return datos;
+}
+
 export function cerrarSesionMicrosoft() {
   sessionStorage.clear();
   document.documentElement.setAttribute("data-auth-state", "guest");
@@ -154,7 +179,6 @@ function adaptarInterfazSegunRol(usuario) {
     .map((p) => p[0].toUpperCase())
     .join("");
 
-  // Actualizar barra lateral en inicio.html
   const sidebarNombre = document.querySelector(".side-menu .fw-bold.mb-0");
   const sidebarRol = document.querySelector(".side-menu small.muted-custom");
   const sidebarAvatar = document.querySelector(".side-menu .avatar");
@@ -163,7 +187,6 @@ function adaptarInterfazSegunRol(usuario) {
   if (sidebarRol) sidebarRol.textContent = mapaRoles[usuario.rol] || usuario.rol;
   if (sidebarAvatar) sidebarAvatar.textContent = iniciales;
 
-  // Actualizar perfil.html si está presente
   const profileName = document.getElementById("profileName");
   const profileAvatar = document.getElementById("profileAvatar");
   const profileSummary = document.getElementById("profileSummary");
@@ -200,7 +223,7 @@ function adaptarInterfazSegunRol(usuario) {
     bioInput.value = usuario.biografia;
   }
 
-  // C3. Adaptar las opciones de la interfaz según el rol del usuario:
+  // Restricción de interfaz por rol (C3): oculta controles exclusivos de tutor para estudiantes
   if (usuario.rol === "estudiante") {
     const seccionDisponibilidad = document.getElementById("disponibilidad");
     const linkDisponibilidad = document.querySelector('#panelNav a[href="#disponibilidad"]');
@@ -210,10 +233,8 @@ function adaptarInterfazSegunRol(usuario) {
     if (linkDisponibilidad) linkDisponibilidad.hidden = true;
   }
 
-  // Si ya inició sesión, adaptar barra de navegación y botones en index.html / pie de página
   const primerNombre = (usuario.nombre || "Usuario").split(" ")[0];
 
-  // 1. Ocultar todos los botones/enlaces de "Crear cuenta" (registro.html) en navbar, hero, secciones y footer
   document.querySelectorAll('a[href="registro.html"]').forEach((enlace) => {
     const li = enlace.closest("li");
     if (li) {
@@ -223,7 +244,6 @@ function adaptarInterfazSegunRol(usuario) {
     }
   });
 
-  // 2. Transformar enlaces de "Ingresar" (login.html) en acceso al panel / perfil del usuario autenticado
   document.querySelectorAll('a[href="login.html"]').forEach((enlace) => {
     if (enlace.closest(".navbar-nav")) {
       enlace.href = "perfil.html";
@@ -234,7 +254,6 @@ function adaptarInterfazSegunRol(usuario) {
       icono.setAttribute("aria-hidden", "true");
       enlace.append(icono, `${primerNombre} (${mapaRoles[usuario.rol] || usuario.rol})`);
 
-      // Agregar botón de "Cerrar sesión" en el navbar de index.html si no existe
       const navList = enlace.closest(".navbar-nav");
       if (navList && !navList.querySelector('[data-action="logout"]')) {
         const liLogout = document.createElement("li");
@@ -289,7 +308,6 @@ async function verificarAccesoPagina() {
       return;
     }
 
-    // En páginas públicas (index.html, login.html, registro.html)
     if (token) {
       if (paginaActual === "login.html" || paginaActual === "registro.html") {
         window.location.replace("inicio.html");
@@ -330,6 +348,95 @@ document.addEventListener("DOMContentLoaded", async () => {
         btnMicrosoft.disabled = false;
         if (typeof window.notify === "function") {
           window.notify(error.message || "No se pudo completar el inicio de sesión con Microsoft");
+        }
+      }
+    });
+  }
+
+  const formRegistro = document.getElementById("entraRegisterForm");
+  if (formRegistro) {
+    formRegistro.addEventListener("submit", async (evento) => {
+      evento.preventDefault();
+
+      const inputNombre = document.getElementById("nameRegister");
+      const selectRol = document.getElementById("roleRegister");
+      const checkTerms = document.getElementById("terms");
+      const btnRegister = document.getElementById("btnRegisterMicrosoft");
+
+      if (!inputNombre.value.trim() || !selectRol.value || !checkTerms.checked) {
+        if (typeof window.notify === "function") {
+          window.notify("Completa tu nombre, selecciona cómo participarás y acepta los términos para continuar.");
+        }
+        return;
+      }
+
+      try {
+        if (btnRegister) btnRegister.disabled = true;
+        const nuevoUsuario = await registrarCuentaConMicrosoft({
+          nombre: inputNombre.value.trim(),
+          rol: selectRol.value
+        });
+        if (typeof window.notify === "function") {
+          window.notify(`Cuenta creada para ${nuevoUsuario.nombre}. Ahora completa tu perfil académico.`);
+        }
+        setTimeout(() => {
+          window.location.href = "perfil.html";
+        }, 900);
+      } catch (error) {
+        if (btnRegister) btnRegister.disabled = false;
+        const errMsg = error.message || "No se pudo crear la cuenta con Microsoft";
+        if (typeof window.notify === "function") {
+          window.notify(errMsg);
+        }
+      }
+    });
+  }
+
+  const btnConfirmSaveProfile = document.getElementById("confirmSave");
+  if (btnConfirmSaveProfile) {
+    btnConfirmSaveProfile.addEventListener("click", async () => {
+      const token = obtenerTokenSesion();
+      if (!token) return;
+
+      const separarPorComas = (texto = "") =>
+        texto
+          .split(",")
+          .map((t) => t.trim())
+          .filter(Boolean);
+
+      const payloadPerfil = {
+        nombre: document.getElementById("fullName")?.value.trim(),
+        programa: document.getElementById("program")?.value.trim(),
+        institucion: document.getElementById("institution")?.value.trim(),
+        rol: document.getElementById("role")?.value,
+        temasCompartir: separarPorComas(document.getElementById("topics")?.value),
+        temasAprender: separarPorComas(document.getElementById("learning")?.value),
+        biografia: document.getElementById("bio")?.value.trim()
+      };
+
+      try {
+        const respuesta = await fetch("/api/auth/perfil", {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify(payloadPerfil)
+        });
+
+        const datosActualizados = await respuesta.json();
+        if (!respuesta.ok) {
+          throw new Error(datosActualizados.mensaje || "No se pudo guardar el perfil en la base de datos");
+        }
+
+        guardarUsuarioEnStorage(datosActualizados, token);
+        adaptarInterfazSegunRol(datosActualizados);
+        if (typeof window.notify === "function") {
+          window.notify("Perfil académico actualizado y guardado en la base de datos.");
+        }
+      } catch (error) {
+        if (typeof window.notify === "function") {
+          window.notify(error.message || "Error al actualizar el perfil");
         }
       }
     });
