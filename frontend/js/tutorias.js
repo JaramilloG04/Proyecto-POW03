@@ -46,6 +46,60 @@ function boton(texto, clase, titulo, accion) {
   return el;
 }
 
+const detalle = document.getElementById("tutoriaDetalle");
+const detalleTitulo = document.getElementById("tutoriaDetalleTitulo");
+const detalleEstado = document.getElementById("tutoriaDetalleEstado");
+const detalleError = document.getElementById("tutoriaDetalleError");
+const detalleDatos = document.getElementById("tutoriaDetalleDatos");
+let detalleOrigen, solicitudDetalle = 0;
+
+async function verDetalle(id, control) {
+  const numero = ++solicitudDetalle;
+  detalleOrigen = control;
+  detalleTitulo.textContent = "Detalle de tutoría";
+  detalleDatos.replaceChildren();
+  errorEn(detalleError);
+  detalle.hidden = false;
+  detalleEstado.textContent = "Cargando detalle…";
+  detalleTitulo.focus();
+  try {
+    const t = await api("/" + encodeURIComponent(id));
+    if (numero !== solicitudDetalle) return;
+    detalleTitulo.textContent = t.titulo;
+    const campos = [
+      ["Área", t.area], ["Descripción", t.descripcion],
+      ["Tutor", t.tutor?.nombre || "Tutor no disponible"],
+      ["Horario", t.horario], ["Modalidad", t.modalidad],
+      ["Duración (horas)", t.duracionHoras], ["Cupos disponibles", t.cuposDisponibles],
+      ["Estado", t.estado]
+    ];
+    detalleDatos.replaceChildren(...campos.flatMap(([nombre, valor]) =>
+      [nodo("dt", "fw-semibold", nombre), nodo("dd", "mb-2", String(valor ?? "Sin información"))]));
+    detalleEstado.textContent = "Detalle cargado.";
+  } catch (error) {
+    if (numero !== solicitudDetalle) return;
+    detalleEstado.textContent = "";
+    errorEn(detalleError, error.message);
+  }
+}
+
+function cerrarDetalle(devolverFoco = true) {
+  solicitudDetalle++;
+  detalle.hidden = true;
+  detalleDatos.replaceChildren();
+  detalleEstado.textContent = "";
+  errorEn(detalleError);
+  if (devolverFoco) {
+    if (detalleOrigen?.isConnected) detalleOrigen.focus();
+    else document.getElementById("tutorias-titulo").focus();
+  }
+}
+
+document.getElementById("cerrarTutoriaDetalle").addEventListener("click", () => cerrarDetalle());
+detalle.addEventListener("keydown", evento => {
+  if (evento.key === "Escape") cerrarDetalle();
+});
+
 function tarjeta(tutoria) {
   const li = nodo("li", "col-md-6");
   const article = nodo("article", "border rounded-4 p-3 h-100");
@@ -59,6 +113,8 @@ function tarjeta(tutoria) {
     nodo("p", "small fw-bold", "Estado: " + tutoria.estado)
   );
   const acciones = nodo("div", "d-flex flex-wrap gap-2");
+  acciones.append(boton("Ver detalles", "btn btn-outline-primary btn-sm", tutoria.titulo,
+    e => verDetalle(tutoria._id, e.currentTarget)));
   if (["estudiante", "ambos"].includes(usuario.rol) && tutoria.estado === "disponible" &&
       tutoria.cuposDisponibles > 0 && tutoria.tutor?._id !== usuario._id) {
     const solicitar = boton("Solicitar tutoría (demo)", "btn btn-outline-primary btn-sm", tutoria.titulo, () => {});
@@ -92,6 +148,7 @@ function tarjeta(tutoria) {
 }
 
 async function cargar(mensaje = "") {
+  cerrarDetalle(false);
   errorEn(errorLista);
   estado.textContent = "Cargando tutorías…";
   try {

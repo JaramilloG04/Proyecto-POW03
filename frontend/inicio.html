@@ -97,6 +97,13 @@
                   <button id="cancelTutoria" type="button" class="btn btn-outline-secondary">Cancelar</button>
                 </div>
               </form>
+              <section id="tutoriaDetalle" class="border rounded-4 p-3 mb-4" aria-labelledby="tutoriaDetalleTitulo" hidden>
+                <h3 id="tutoriaDetalleTitulo" class="h5 fw-bold" tabindex="-1">Detalle de tutoría</h3>
+                <p id="tutoriaDetalleEstado" role="status" aria-live="polite"></p>
+                <div id="tutoriaDetalleError" class="alert alert-danger" role="alert" hidden></div>
+                <dl id="tutoriaDetalleDatos" class="mb-3"></dl>
+                <button id="cerrarTutoriaDetalle" type="button" class="btn btn-outline-primary btn-sm">Cerrar detalle</button>
+              </section>
               <ul id="tutoriasList" class="row g-3 list-unstyled mb-0"></ul>
             </div>
           </section>
