@@ -8,7 +8,25 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
-  <script>document.documentElement.setAttribute("data-auth-state",sessionStorage.getItem("edu-kt-free-id-token")?"authenticated":"guest");</script>
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem("edu-kt-free-theme") || "light";
+        var token = sessionStorage.getItem("edu-kt-free-id-token");
+        document.documentElement.setAttribute("data-bs-theme", t);
+        if (!token) {
+          window.location.replace("login.html");
+          return;
+        }
+        document.documentElement.setAttribute("data-auth-state", "authenticated");
+        var rawUser = sessionStorage.getItem("edu-kt-free-user");
+        var user = rawUser ? JSON.parse(rawUser) : null;
+        if (user && user.rol) {
+          document.documentElement.setAttribute("data-user-role", user.rol);
+        }
+      } catch (e) {}
+    })();
+  </script>
 </head>
 <body>
   <!-- 2.4.1 Saltar bloques: primer elemento enfocable de la página -->
@@ -16,18 +34,54 @@
   <nav class="navbar navbar-expand-lg sticky-top" aria-label="Navegación principal">
     <div class="container">
       <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
-        <i class="bi bi-people-fill fs-4" aria-hidden="true"></i>
+        <span class="brand-mark" aria-hidden="true"><i class="bi bi-people-fill"></i></span>
         <span>EDU-KT <span lang="en">Free</span></span>
       </a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menuPrincipal" aria-controls="menuPrincipal" aria-expanded="false" aria-label="Abrir menú de navegación"><span class="navbar-toggler-icon"></span></button>
       <div class="collapse navbar-collapse" id="menuPrincipal">
-        <ul class="navbar-nav ms-auto align-items-lg-center gap-2 gap-lg-1 pb-3 pb-lg-0">
-          <li class="nav-item"><a class="nav-link" href="inicio.html">Mi panel</a></li>
-          <li class="nav-item"><a class="nav-link active" href="perfil.html" aria-current="page">Mi perfil</a></li>
-          <li class="nav-item" data-admin-only hidden><a class="nav-link" href="admin.html">Administración</a></li>
-          <li class="nav-item"><a class="nav-link" href="index.html">Cerrar sesión</a></li>
-          <li class="nav-item ms-lg-2"><button id="themeToggle" class="btn btn-sm btn-light border" type="button" aria-label="Cambiar a modo oscuro" title="Cambiar a modo oscuro"><i class="bi bi-moon-stars-fill" aria-hidden="true"></i></button></li>
+        <ul class="navbar-nav ms-lg-auto me-lg-3 nav-pill-group align-items-lg-center gap-1 my-2 my-lg-0">
+          <li class="nav-item"><a class="nav-link" href="index.html">Plataforma</a></li>
+          <li class="nav-item"><a class="nav-link" href="index.html#como-funciona">Metodología</a></li>
+          <li class="nav-item"><a class="nav-link" href="index.html#impacto">Impacto</a></li>
+          <li class="nav-item"><a class="nav-link" href="index.html#ayuda">Soporte</a></li>
         </ul>
+
+        <div class="d-flex flex-wrap align-items-center gap-2 pt-2 pt-lg-0">
+          <div class="d-flex align-items-center gap-2" data-guest-only>
+            <a class="btn btn-sm btn-outline-primary" href="login.html"><i class="bi bi-box-arrow-in-right me-1" aria-hidden="true"></i>Ingresar</a>
+            <a class="btn btn-sm btn-primary" href="registro.html"><i class="bi bi-person-plus me-1" aria-hidden="true"></i>Crear cuenta</a>
+          </div>
+
+          <div class="dropdown" data-auth-only>
+            <button class="btn profile-menu-trigger d-inline-flex align-items-center gap-2" type="button" id="userMenuButton" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Menú de perfil de usuario">
+              <span class="profile-trigger-avatar" aria-hidden="true">
+                <i class="bi bi-person-fill"></i>
+              </span>
+              <span class="d-none d-sm-flex flex-column text-start lh-sm">
+                <span class="profile-trigger-name" data-user-short-name>Mi cuenta</span>
+                <small class="profile-trigger-role" data-user-role-label>Comunidad</small>
+              </span>
+              <i class="bi bi-chevron-down profile-trigger-caret" aria-hidden="true"></i>
+            </button>
+            <div class="dropdown-menu dropdown-menu-end profile-dropdown-menu" aria-labelledby="userMenuButton">
+              <div class="profile-dropdown-header">
+                <p class="fw-bold mb-0 small text-truncate" data-user-fullname>Mi cuenta</p>
+                <small class="d-block text-truncate muted-custom" data-user-email></small>
+                <span class="profile-role-badge mt-1" data-user-role-badge>Activo</span>
+              </div>
+              <div class="py-1">
+                <a class="dropdown-item profile-dropdown-item" href="inicio.html"><i class="bi bi-grid-1x2" aria-hidden="true"></i><span>Mi panel</span></a>
+                <a class="dropdown-item profile-dropdown-item active" href="perfil.html" aria-current="page"><i class="bi bi-person-vcard" aria-hidden="true"></i><span>Mi perfil</span></a>
+                <a class="dropdown-item profile-dropdown-item" href="admin.html" data-admin-only hidden><i class="bi bi-shield-lock" aria-hidden="true"></i><span>Zona de administración</span></a>
+              </div>
+              <div class="profile-dropdown-footer">
+                <button class="dropdown-item profile-dropdown-item profile-logout-item" type="button" data-action="logout"><i class="bi bi-box-arrow-right" aria-hidden="true"></i><span>Cerrar sesión</span></button>
+              </div>
+            </div>
+          </div>
+
+          <button id="themeToggle" class="btn btn-sm theme-toggle-btn" type="button" aria-label="Cambiar a modo oscuro" title="Cambiar a modo oscuro"><i class="bi bi-moon-stars-fill" aria-hidden="true"></i></button>
+        </div>
       </div>
     </div>
   </nav>
@@ -39,44 +93,95 @@
           <a href="inicio.html" class="small text-decoration-none target-min"><i class="bi bi-arrow-left me-1" aria-hidden="true"></i>Volver al panel</a>
           <section class="card profile-card mt-3" aria-labelledby="profileName">
             <div class="card-body p-4 p-md-5">
-              <div class="d-flex flex-wrap align-items-center gap-3 border-bottom pb-4 mb-4">
-                <div class="avatar avatar-large" id="profileAvatar" aria-hidden="true">JC</div>
-                <div class="flex-grow-1"><p class="eyebrow mb-1">Perfil académico</p><h1 class="h3 fw-bold mb-1" id="profileName">Juan Camilo Jaramillo</h1><p class="muted-custom mb-0" id="profileSummary">Estudiante y tutor · Programación Web</p></div>
-                <span class="badge text-bg-success"><i class="bi bi-check-circle me-1" aria-hidden="true"></i>Perfil activo</span>
+              <div id="profileSkeleton" aria-busy="true" aria-label="Cargando perfil académico">
+                <div class="d-flex flex-wrap align-items-center gap-3 border-bottom pb-4 mb-4">
+                  <div class="sk-box sk-circle" style="width:4rem;height:4rem;"></div>
+                  <div class="flex-grow-1">
+                    <div class="sk-box-subtle mb-2" style="width:28%;height:0.75rem;"></div>
+                    <div class="sk-box mb-2" style="width:48%;height:1.4rem;"></div>
+                    <div class="sk-box-subtle" style="width:36%;height:0.85rem;"></div>
+                  </div>
+                  <div class="sk-box sk-pill" style="width:6.5rem;height:1.6rem;"></div>
+                </div>
+                <div class="mb-4">
+                  <div class="sk-box mb-3" style="width:10rem;height:1rem;"></div>
+                  <div class="row g-3">
+                    <div class="col-md-6">
+                      <div class="sk-box-subtle mb-2" style="width:55%;height:0.85rem;"></div>
+                      <div class="sk-box sk-input" style="width:100%;height:2.375rem;"></div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="sk-box-subtle mb-2" style="width:50%;height:0.85rem;"></div>
+                      <div class="sk-box sk-input" style="width:100%;height:2.375rem;"></div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="sk-box-subtle mb-2" style="width:52%;height:0.85rem;"></div>
+                      <div class="sk-box sk-input" style="width:100%;height:2.375rem;"></div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="sk-box-subtle mb-2" style="width:48%;height:0.85rem;"></div>
+                      <div class="sk-box sk-input" style="width:100%;height:2.375rem;"></div>
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <div class="sk-box mb-3" style="width:18rem;height:1rem;"></div>
+                  <div class="row g-3">
+                    <div class="col-12">
+                      <div class="sk-box-subtle mb-2" style="width:42%;height:0.85rem;"></div>
+                      <div class="sk-box sk-input" style="width:100%;height:2.375rem;"></div>
+                    </div>
+                    <div class="col-12">
+                      <div class="sk-box-subtle mb-2" style="width:40%;height:0.85rem;"></div>
+                      <div class="sk-box sk-input" style="width:100%;height:2.375rem;"></div>
+                    </div>
+                    <div class="col-12">
+                      <div class="sk-box-subtle mb-2" style="width:28%;height:0.85rem;"></div>
+                      <div class="sk-box sk-textarea" style="width:100%;height:6.5rem;"></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="d-flex flex-wrap gap-2 justify-content-end mt-4">
+                  <div class="sk-box sk-btn" style="width:6.5rem;height:2.375rem;"></div>
+                  <div class="sk-box sk-btn" style="width:10rem;height:2.375rem;"></div>
+                </div>
               </div>
 
-              <!-- 3.3.7 Entrada redundante: avisa que se reutilizaron los datos del registro -->
-              <div id="prefillNotice" class="alert alert-info" role="status" hidden>
-                <i class="bi bi-info-circle me-2" aria-hidden="true"></i>Usamos el nombre y el rol que escribiste al registrarte, para que no tengas que escribirlos otra vez.
+              <div id="profileContent" hidden>
+                <div class="d-flex flex-wrap align-items-center gap-3 border-bottom pb-4 mb-4">
+                  <div class="avatar avatar-large" id="profileAvatar" aria-hidden="true"></div>
+                  <div class="flex-grow-1"><p class="eyebrow mb-1">Perfil académico</p><h1 class="h3 fw-bold mb-1" id="profileName">Mi perfil</h1><p class="muted-custom mb-0" id="profileSummary"></p></div>
+                  <span class="badge text-bg-success"><i class="bi bi-check-circle me-1" aria-hidden="true"></i>Perfil activo</span>
+                </div>
+
+                <form id="profileForm" novalidate>
+                  <p class="small muted-custom">Los campos marcados como «obligatorio» son necesarios para guardar tu perfil. Antes de guardar te mostraremos un resumen de los cambios.</p>
+                  <div class="alert alert-danger form-error-summary" role="alert" hidden></div>
+                  <div id="profileApiError" class="alert alert-danger" role="alert" hidden></div>
+
+                  <!-- 1.3.1 Los campos relacionados se agrupan con fieldset y legend -->
+                  <fieldset class="mb-4">
+                    <legend class="h6 fw-bold mb-3">Datos académicos</legend>
+                    <div class="row g-3">
+                      <div class="col-md-6"><label class="form-label" for="fullName">Nombre completo <span class="required-hint">(obligatorio)</span></label><input class="form-control" id="fullName" name="name" type="text" autocomplete="name" value="" required></div>
+                      <div class="col-md-6"><label class="form-label" for="program">Programa académico</label><input class="form-control" id="program" name="program" type="text" value=""></div>
+                      <div class="col-md-6"><label class="form-label" for="institution">Institución educativa</label><input class="form-control" id="institution" name="institution" type="text" autocomplete="organization" value="" aria-describedby="institutionHelp"><div id="institutionHelp" class="form-text">Escribe el nombre completo, sin siglas.</div></div>
+                      <div class="col-md-6"><label class="form-label" for="role">Rol dentro de la red</label><select class="form-select" id="role" name="role" disabled aria-describedby="roleHelp"><option value="ambos">Estudiante y tutor</option><option value="estudiante">Estudiante</option><option value="tutor">Tutor</option></select><div id="roleHelp" class="form-text">Tu rol solo puede cambiarlo un administrador.</div></div>
+                    </div>
+                  </fieldset>
+
+                  <fieldset>
+                    <legend class="h6 fw-bold mb-3">Lo que compartes y lo que quieres aprender</legend>
+                    <div class="row g-3">
+                      <div class="col-12"><label class="form-label" for="topics">Temas que puedes compartir</label><input class="form-control" id="topics" name="topics" type="text" value="" aria-describedby="topicsHelp"><div id="topicsHelp" class="form-text">Separa los temas con comas.</div></div>
+                      <div class="col-12"><label class="form-label" for="learning">Temas que deseas aprender</label><input class="form-control" id="learning" name="learning" type="text" value="" aria-describedby="learningHelp"><div id="learningHelp" class="form-text">Separa los temas con comas. Ejemplo: JavaScript, cálculo diferencial, inglés.</div></div>
+                      <div class="col-12"><label class="form-label" for="bio">Acerca de ti</label><textarea class="form-control" id="bio" name="bio" rows="4"></textarea></div>
+                    </div>
+                  </fieldset>
+
+                  <div class="d-flex flex-wrap gap-2 justify-content-end mt-4"><a class="btn btn-outline-primary" href="inicio.html">Cancelar</a><button class="btn btn-primary" type="submit" id="profileSubmit"><i class="bi bi-check2 me-1" aria-hidden="true"></i>Guardar cambios</button></div>
+                </form>
               </div>
-
-              <form id="profileForm" novalidate>
-                <p class="small muted-custom">Los campos marcados como «obligatorio» son necesarios para guardar tu perfil. Antes de guardar te mostraremos un resumen de los cambios.</p>
-                <div class="alert alert-danger form-error-summary" role="alert" hidden></div>
-                <div id="profileApiError" class="alert alert-danger" role="alert" hidden></div>
-
-                <!-- 1.3.1 Los campos relacionados se agrupan con fieldset y legend -->
-                <fieldset class="mb-4">
-                  <legend class="h6 fw-bold mb-3">Datos académicos</legend>
-                  <div class="row g-3">
-                    <div class="col-md-6"><label class="form-label" for="fullName">Nombre completo <span class="required-hint">(obligatorio)</span></label><input class="form-control" id="fullName" name="name" type="text" autocomplete="name" value="Juan Camilo Jaramillo" required></div>
-                    <div class="col-md-6"><label class="form-label" for="program">Programa académico</label><input class="form-control" id="program" name="program" type="text" value="Programación Web"></div>
-                    <div class="col-md-6"><label class="form-label" for="institution">Institución educativa</label><input class="form-control" id="institution" name="institution" type="text" autocomplete="organization" aria-describedby="institutionHelp"><div id="institutionHelp" class="form-text">Escribe el nombre completo, sin siglas.</div></div>
-                    <div class="col-md-6"><label class="form-label" for="role">Rol dentro de la red</label><select class="form-select" id="role" name="role" disabled aria-describedby="roleHelp"><option value="ambos">Estudiante y tutor</option><option value="estudiante">Estudiante</option><option value="tutor">Tutor</option></select><div id="roleHelp" class="form-text">Tu rol solo puede cambiarlo un administrador.</div></div>
-                  </div>
-                </fieldset>
-
-                <fieldset>
-                  <legend class="h6 fw-bold mb-3">Lo que compartes y lo que quieres aprender</legend>
-                  <div class="row g-3">
-                    <div class="col-12"><label class="form-label" for="topics">Temas que puedes compartir</label><input class="form-control" id="topics" name="topics" type="text" value="HTML, CSS y fundamentos web" aria-describedby="topicsHelp"><div id="topicsHelp" class="form-text">Separa los temas con comas.</div></div>
-                    <div class="col-12"><label class="form-label" for="learning">Temas que deseas aprender</label><input class="form-control" id="learning" name="learning" type="text" aria-describedby="learningHelp"><div id="learningHelp" class="form-text">Separa los temas con comas. Ejemplo: JavaScript, cálculo diferencial, inglés.</div></div>
-                    <div class="col-12"><label class="form-label" for="bio">Acerca de ti</label><textarea class="form-control" id="bio" name="bio" rows="4">Me interesa compartir conocimientos y aprender en comunidad.</textarea></div>
-                  </div>
-                </fieldset>
-
-                <div class="d-flex flex-wrap gap-2 justify-content-end mt-4"><a class="btn btn-outline-primary" href="inicio.html">Cancelar</a><button class="btn btn-primary" type="submit" id="profileSubmit"><i class="bi bi-check2 me-1" aria-hidden="true"></i>Guardar cambios</button></div>
-              </form>
             </div>
           </section>
         </div>
@@ -89,11 +194,8 @@
       <p class="mb-0"><strong class="text-white">EDU-KT <span lang="en">Free</span></strong><span class="ms-2 small">Educación colaborativa y acceso comunitario.</span></p>
       <nav aria-label="Enlaces del pie de página">
         <ul class="footer-links small">
-          <li><a href="index.html">Inicio</a></li>
-          <li><a href="inicio.html">Explorar tutorías</a></li>
-          <li><a href="login.html">Ingresar</a></li>
-          <li><a href="registro.html">Crear cuenta</a></li>
-          <li><a href="index.html#ayuda"><i class="bi bi-question-circle me-1" aria-hidden="true"></i>Ayuda</a></li>
+          <li><a href="index.html#como-funciona">Cómo funciona</a></li>
+          <li><a href="index.html#ayuda"><i class="bi bi-question-circle me-1" aria-hidden="true"></i>Preguntas frecuentes</a></li>
         </ul>
       </nav>
     </div>

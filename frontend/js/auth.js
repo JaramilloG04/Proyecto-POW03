@@ -1,6 +1,18 @@
 const TOKEN_STORAGE_KEY = "edu-kt-free-id-token";
 const USER_STORAGE_KEY = "edu-kt-free-user";
 const PAGINAS_PROTEGIDAS = ["inicio.html", "perfil.html", "admin.html"];
+const CACHE_KEYS = [
+  "edu-kt-free-cache-tutorias",
+  "edu-kt-free-cache-solicitudes",
+  "edu-kt-free-cache-admin"
+];
+
+const MAPA_ROLES = {
+  admin: "Administrador",
+  tutor: "Tutor",
+  estudiante: "Estudiante",
+  ambos: "Estudiante y tutor"
+};
 
 function obtenerNombreArchivoActual() {
   const ruta = window.location.pathname;
@@ -9,29 +21,76 @@ function obtenerNombreArchivoActual() {
 }
 
 export function obtenerTokenSesion() {
-  return sessionStorage.getItem(TOKEN_STORAGE_KEY);
+  try {
+    return sessionStorage.getItem(TOKEN_STORAGE_KEY);
+  } catch {
+    return null;
+  }
 }
 
 export function obtenerUsuarioSesion() {
   try {
     const raw = sessionStorage.getItem(USER_STORAGE_KEY);
-    return raw ? JSON.parse(raw) : null;
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    return parsed && typeof parsed === "object" ? parsed : null;
   } catch {
     return null;
   }
+}
+
+function formatearNombreCorto(nombre) {
+  const partes = String(nombre || "").trim().split(/\s+/).filter(Boolean);
+  if (partes.length === 0) return "Usuario";
+  if (partes.length === 1) return partes[0];
+  const segundo = partes[1].length <= 6 ? partes[1] : `${partes[1][0].toUpperCase()}.`;
+  return `${partes[0]} ${segundo}`;
+}
+
+function limpiarCachesSesion() {
+  try {
+    for (const key of CACHE_KEYS) {
+      sessionStorage.removeItem(key);
+    }
+  } catch {
+    // Sin acceso a almacenamiento de sesión.
+  }
+}
+
+function toggleAuthSkeleton(mostrar) {
+  const authSkeleton = document.getElementById("authSkeleton");
+  const authFormBody = document.getElementById("authFormBody");
+  if (authSkeleton) authSkeleton.hidden = !mostrar;
+  if (authFormBody) authFormBody.hidden = mostrar;
 }
 
 function sincronizarEstadoDomDeSesion() {
   const tieneSesion = Boolean(obtenerTokenSesion());
   document.documentElement.setAttribute("data-auth-state", tieneSesion ? "authenticated" : "guest");
 
-  if (!tieneSesion && PAGINAS_PROTEGIDAS.includes(obtenerNombreArchivoActual())) {
-    document.documentElement.style.visibility = "hidden";
-    window.location.replace("login.html");
+  if (!tieneSesion) {
+    document.documentElement.removeAttribute("data-user-role");
+    if (PAGINAS_PROTEGIDAS.includes(obtenerNombreArchivoActual())) {
+      window.location.replace("login.html");
+    }
+    return;
+  }
+
+  const usuarioCache = obtenerUsuarioSesion();
+  if (usuarioCache) {
+    if (usuarioCache.rol) {
+      document.documentElement.setAttribute("data-user-role", usuarioCache.rol);
+    }
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", () => {
+        adaptarInterfazSegunRol(usuarioCache);
+      }, { once: true });
+    } else {
+      adaptarInterfazSegunRol(usuarioCache);
+    }
   }
 }
 
-// Se ejecuta de forma síncrona antes de renderizar el DOM para evitar parpadeos de elementos restringidos
 sincronizarEstadoDomDeSesion();
 
 let msalInstance = null;
@@ -80,22 +139,36 @@ async function obtenerInstanciaMsal() {
 }
 
 function guardarUsuarioEnStorage(datos, idToken = null) {
-  if (idToken) {
-    sessionStorage.setItem(TOKEN_STORAGE_KEY, idToken);
+  if (!datos || typeof datos !== "object") {
+    return;
   }
-  sessionStorage.setItem(USER_STORAGE_KEY, JSON.stringify(datos));
-  sessionStorage.setItem(
-    "edu-kt-free-registro",
-    JSON.stringify({
-      name: datos.nombre,
-      email: datos.correo,
-      role: datos.rol
-    })
-  );
+  try {
+    if (idToken) {
+      sessionStorage.setItem(TOKEN_STORAGE_KEY, idToken);
+    }
+    sessionStorage.setItem(USER_STORAGE_KEY, JSON.stringify(datos));
+    sessionStorage.setItem(
+      "edu-kt-free-registro",
+      JSON.stringify({
+        name: datos.nombre,
+        email: datos.correo,
+        role: datos.rol
+      })
+    );
+  } catch {
+    // Sin almacenamiento disponible: la sesión activa permanece en memoria de la pestaña.
+  }
   document.documentElement.setAttribute("data-auth-state", "authenticated");
+  if (datos.rol) {
+    document.documentElement.setAttribute("data-user-role", datos.rol);
+  }
+  window.dispatchEvent(new CustomEvent("edukt:user-synced", { detail: datos }));
 }
 
 export async function sincronizarPerfilConBackend(idToken) {
+  if (!idToken || typeof idToken !== "string") {
+    throw new Error("Token de sesión inválido");
+  }
   const respuesta = await fetch("/api/auth/perfil", {
     headers: {
       "Content-Type": "application/json",
@@ -105,8 +178,14 @@ export async function sincronizarPerfilConBackend(idToken) {
 
   const datos = await respuesta.json();
   if (!respuesta.ok) {
-    sessionStorage.removeItem(TOKEN_STORAGE_KEY);
-    sessionStorage.removeItem(USER_STORAGE_KEY);
+    try {
+      sessionStorage.removeItem(TOKEN_STORAGE_KEY);
+      sessionStorage.removeItem(USER_STORAGE_KEY);
+      limpiarCachesSesion();
+    } catch {
+      // Ignorar fallos de almacenamiento restringido.
+    }
+    document.documentElement.removeAttribute("data-user-role");
     document.documentElement.setAttribute("data-auth-state", "guest");
     throw new Error(datos.mensaje || "No autorizado para acceder a la plataforma");
   }
@@ -159,34 +238,76 @@ export async function registrarCuentaConMicrosoft({ nombre, rol }) {
 }
 
 export function cerrarSesionMicrosoft() {
-  sessionStorage.clear();
+  try {
+    limpiarCachesSesion();
+    sessionStorage.clear();
+  } catch {
+    // Ignorar fallos de almacenamiento restringido.
+  }
+  document.documentElement.removeAttribute("data-user-role");
   document.documentElement.setAttribute("data-auth-state", "guest");
   window.location.replace("index.html");
 }
 
-function adaptarInterfazSegunRol(usuario, verificado = false) {
-  document.querySelectorAll("[data-admin-only]").forEach(el => { el.hidden = !verificado || usuario.rol !== "admin"; });
-  const mapaRoles = {
-    admin: "Administrador",
-    tutor: "Tutor",
-    estudiante: "Estudiante",
-    ambos: "Estudiante y tutor"
-  };
+function adaptarInterfazSegunRol(usuario) {
+  if (!usuario || typeof usuario !== "object") {
+    return;
+  }
 
-  const iniciales = (usuario.nombre || "U")
+  document.documentElement.setAttribute("data-auth-state", "authenticated");
+  if (usuario.rol) {
+    document.documentElement.setAttribute("data-user-role", usuario.rol);
+  }
+
+  const esAdmin = usuario.rol === "admin";
+  const paginaActual = obtenerNombreArchivoActual();
+  document.querySelectorAll("[data-admin-only]").forEach((el) => {
+    if (paginaActual === "admin.html" && !esAdmin) {
+      return;
+    }
+    el.hidden = !esAdmin;
+  });
+
+  const nombreCompleto = typeof usuario.nombre === "string" && usuario.nombre.trim()
+    ? usuario.nombre.trim()
+    : "Usuario";
+  const nombreCorto = formatearNombreCorto(nombreCompleto);
+  const correo = typeof usuario.correo === "string" ? usuario.correo : "";
+  const etiquetaRol = MAPA_ROLES[usuario.rol] || usuario.rol || "Usuario";
+
+  const iniciales = nombreCompleto
     .split(/\s+/)
     .filter(Boolean)
     .slice(0, 2)
     .map((p) => p[0].toUpperCase())
-    .join("");
+    .join("") || "U";
 
-  const sidebarNombre = document.querySelector(".side-menu .fw-bold.mb-0");
-  const sidebarRol = document.querySelector(".side-menu small.muted-custom");
-  const sidebarAvatar = document.querySelector(".side-menu .avatar");
+  document.querySelectorAll("[data-user-short-name]").forEach((el) => {
+    el.textContent = nombreCorto;
+  });
+  document.querySelectorAll("[data-user-fullname]").forEach((el) => {
+    el.textContent = nombreCompleto;
+  });
+  document.querySelectorAll("[data-user-email]").forEach((el) => {
+    el.textContent = correo;
+  });
+  document.querySelectorAll("[data-user-role-label], [data-user-role-badge]").forEach((el) => {
+    el.textContent = etiquetaRol;
+  });
 
-  if (sidebarNombre) sidebarNombre.textContent = usuario.nombre;
-  if (sidebarRol) sidebarRol.textContent = mapaRoles[usuario.rol] || usuario.rol;
-  if (sidebarAvatar) sidebarAvatar.textContent = iniciales;
+  const sidebarSkeleton = document.getElementById("sidebarUserSkeleton");
+  const sidebarContent = document.getElementById("sidebarUserContent");
+  const sidebarScope = sidebarContent || document.querySelector(".side-menu");
+  if (sidebarScope) {
+    const sidebarNombre = sidebarScope.querySelector("[data-user-fullname], .fw-bold.mb-0");
+    const sidebarRol = sidebarScope.querySelector("[data-user-role-label], small.muted-custom");
+    const sidebarAvatar = sidebarScope.querySelector(".avatar");
+    if (sidebarNombre) sidebarNombre.textContent = nombreCompleto;
+    if (sidebarRol) sidebarRol.textContent = etiquetaRol;
+    if (sidebarAvatar) sidebarAvatar.textContent = iniciales;
+  }
+  if (sidebarSkeleton) sidebarSkeleton.hidden = true;
+  if (sidebarContent) sidebarContent.hidden = false;
 
   const profileName = document.getElementById("profileName");
   const profileAvatar = document.getElementById("profileAvatar");
@@ -199,30 +320,40 @@ function adaptarInterfazSegunRol(usuario, verificado = false) {
   const learningInput = document.getElementById("learning");
   const bioInput = document.getElementById("bio");
 
-  if (profileName) profileName.textContent = usuario.nombre;
+  if (profileName) profileName.textContent = nombreCompleto;
   if (profileAvatar) profileAvatar.textContent = iniciales;
   if (profileSummary) {
-    const textoRol = mapaRoles[usuario.rol] || usuario.rol;
-    profileSummary.textContent = usuario.programa ? `${textoRol} · ${usuario.programa}` : textoRol;
+    profileSummary.textContent = usuario.programa ? `${etiquetaRol} · ${usuario.programa}` : etiquetaRol;
   }
-  if (fullNameInput) fullNameInput.value = usuario.nombre || "";
+  if (fullNameInput) fullNameInput.value = nombreCompleto;
   if (programInput) programInput.value = usuario.programa || "";
   if (institutionInput) institutionInput.value = usuario.institucion || "";
-  if (roleSelect) {
+  if (roleSelect && usuario.rol) {
     if (usuario.rol === "admin" && ![...roleSelect.options].some((o) => o.value === "admin")) {
       roleSelect.add(new Option("Administrador", "admin"));
     }
     roleSelect.value = usuario.rol;
   }
-  if (topicsInput && Array.isArray(usuario.temasCompartir)) {
-    topicsInput.value = usuario.temasCompartir.join(", ");
+  if (topicsInput) {
+    topicsInput.value = Array.isArray(usuario.temasCompartir) ? usuario.temasCompartir.join(", ") : "";
   }
-  if (learningInput && Array.isArray(usuario.temasAprender)) {
-    learningInput.value = usuario.temasAprender.join(", ");
+  if (learningInput) {
+    learningInput.value = Array.isArray(usuario.temasAprender) ? usuario.temasAprender.join(", ") : "";
   }
   if (bioInput) bioInput.value = usuario.biografia || "";
 
-  // Restricción de interfaz por rol (C3): oculta controles exclusivos de tutor para estudiantes
+  const profileForm = document.getElementById("profileForm");
+  if (profileForm) {
+    if (typeof window.updateProfileHeader === "function") {
+      window.updateProfileHeader();
+    }
+    profileForm.dispatchEvent(new Event("profile:synced"));
+  }
+  const profileSkeleton = document.getElementById("profileSkeleton");
+  const profileContent = document.getElementById("profileContent");
+  if (profileSkeleton) profileSkeleton.hidden = true;
+  if (profileContent) profileContent.hidden = false;
+
   if (usuario.rol === "estudiante") {
     const seccionDisponibilidad = document.getElementById("disponibilidad");
     const linkDisponibilidad = document.querySelector('#panelNav a[href="#disponibilidad"]');
@@ -232,55 +363,11 @@ function adaptarInterfazSegunRol(usuario, verificado = false) {
     if (linkDisponibilidad) linkDisponibilidad.hidden = true;
   }
 
-  const primerNombre = (usuario.nombre || "Usuario").split(" ")[0];
-
-  document.querySelectorAll('a[href="registro.html"]').forEach((enlace) => {
-    const li = enlace.closest("li");
-    if (li) {
-      li.hidden = true;
-    } else {
-      enlace.hidden = true;
-    }
-  });
-
-  document.querySelectorAll('a[href="login.html"]').forEach((enlace) => {
-    if (enlace.closest(".navbar-nav")) {
-      enlace.href = "perfil.html";
-      enlace.className = "btn btn-sm btn-outline-primary";
-      enlace.replaceChildren();
-      const icono = document.createElement("i");
-      icono.className = "bi bi-person-circle me-1";
-      icono.setAttribute("aria-hidden", "true");
-      enlace.append(icono, `${primerNombre} (${mapaRoles[usuario.rol] || usuario.rol})`);
-
-      const navList = enlace.closest(".navbar-nav");
-      if (navList && !navList.querySelector('[data-action="logout"]')) {
-        const liLogout = document.createElement("li");
-        liLogout.className = "nav-item ms-lg-2";
-        const btnLogout = document.createElement("button");
-        btnLogout.type = "button";
-        btnLogout.dataset.action = "logout";
-        btnLogout.className = "btn btn-sm btn-primary";
-        btnLogout.textContent = "Cerrar sesión";
-        btnLogout.addEventListener("click", cerrarSesionMicrosoft);
-        liLogout.append(btnLogout);
-
-        const themeItem = document.getElementById("themeToggle")?.closest("li");
-        if (themeItem) {
-          navList.insertBefore(liLogout, themeItem);
-        } else {
-          navList.append(liLogout);
-        }
-      }
-    } else {
-      const li = enlace.closest("li");
-      if (li) {
-        li.hidden = true;
-      } else {
-        enlace.hidden = true;
-      }
-    }
-  });
+  const primerNombre = nombreCompleto.split(/\s+/)[0] || "Usuario";
+  const navProfileLabel = document.getElementById("navProfileLabel");
+  if (navProfileLabel) {
+    navProfileLabel.textContent = `${primerNombre} (${etiquetaRol})`;
+  }
 }
 
 async function verificarAccesoPagina() {
@@ -296,19 +383,18 @@ async function verificarAccesoPagina() {
       }
 
       const usuarioCache = obtenerUsuarioSesion();
-      if (usuarioCache && paginaActual !== "admin.html") {
+      if (usuarioCache) {
         adaptarInterfazSegunRol(usuarioCache);
       }
 
       const usuarioVerificado = await sincronizarPerfilConBackend(token);
-      adaptarInterfazSegunRol(usuarioVerificado, true);
-      if (paginaActual === "perfil.html") document.getElementById("profileForm")?.dispatchEvent(new Event("profile:synced"));
-      document.documentElement.style.visibility = "visible";
+      adaptarInterfazSegunRol(usuarioVerificado);
       return;
     }
 
     if (token) {
       if (paginaActual === "login.html" || paginaActual === "registro.html") {
+        toggleAuthSkeleton(true);
         window.location.replace("inicio.html");
         return;
       }
@@ -319,7 +405,7 @@ async function verificarAccesoPagina() {
       }
 
       const usuarioVerificado = await sincronizarPerfilConBackend(token);
-      adaptarInterfazSegunRol(usuarioVerificado, true);
+      adaptarInterfazSegunRol(usuarioVerificado);
     }
   } catch {
     if (esProtegida) {
@@ -336,14 +422,16 @@ document.addEventListener("DOMContentLoaded", async () => {
     btnMicrosoft.addEventListener("click", async () => {
       try {
         btnMicrosoft.disabled = true;
+        toggleAuthSkeleton(true);
         const usuario = await iniciarSesionConMicrosoft();
         if (typeof window.notify === "function") {
           window.notify(`Sesión iniciada como ${usuario.nombre}. Redirigiendo a tu panel…`);
         }
         setTimeout(() => {
           window.location.href = "inicio.html";
-        }, 700);
+        }, 150);
       } catch (error) {
+        toggleAuthSkeleton(false);
         btnMicrosoft.disabled = false;
         if (typeof window.notify === "function") {
           window.notify(error.message || "No se pudo completar el inicio de sesión con Microsoft");
@@ -362,18 +450,23 @@ document.addEventListener("DOMContentLoaded", async () => {
       const checkTerms = document.getElementById("terms");
       const btnRegister = document.getElementById("btnRegisterMicrosoft");
       const errorRegistro = document.getElementById("registroError");
-      errorRegistro.hidden = true;
-      errorRegistro.textContent = "";
+      if (errorRegistro) {
+        errorRegistro.hidden = true;
+        errorRegistro.textContent = "";
+      }
 
-      if (!inputNombre.value.trim() || !selectRol.value || !checkTerms.checked) {
-        errorRegistro.textContent = "Completa tu nombre, selecciona cómo participarás y acepta los términos para continuar.";
-        errorRegistro.hidden = false;
-        if (!inputNombre.value.trim()) inputNombre.focus();
+      if (!inputNombre?.value.trim() || !selectRol?.value || !checkTerms?.checked) {
+        if (errorRegistro) {
+          errorRegistro.textContent = "Completa tu nombre, selecciona cómo participarás y acepta los términos para continuar.";
+          errorRegistro.hidden = false;
+        }
+        if (inputNombre && !inputNombre.value.trim()) inputNombre.focus();
         return;
       }
 
       try {
         if (btnRegister) btnRegister.disabled = true;
+        toggleAuthSkeleton(true);
         const nuevoUsuario = await registrarCuentaConMicrosoft({
           nombre: inputNombre.value.trim(),
           rol: selectRol.value
@@ -383,18 +476,22 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
         setTimeout(() => {
           window.location.href = "perfil.html";
-        }, 900);
+        }, 150);
       } catch (error) {
+        toggleAuthSkeleton(false);
         if (btnRegister) btnRegister.disabled = false;
-        errorRegistro.textContent = error.message || "No se pudo crear la cuenta con Microsoft";
-        errorRegistro.hidden = false;
+        if (errorRegistro) {
+          errorRegistro.textContent = error.message || "No se pudo crear la cuenta con Microsoft";
+          errorRegistro.hidden = false;
+        }
       }
     });
   }
 
   const btnConfirmSaveProfile = document.getElementById("confirmSave");
-  if (btnConfirmSaveProfile) {
-    document.getElementById("profileForm").addEventListener("profile:save", async () => {
+  const profileForm = document.getElementById("profileForm");
+  if (btnConfirmSaveProfile && profileForm) {
+    profileForm.addEventListener("profile:save", async () => {
       const token = obtenerTokenSesion();
       if (!token) return;
 
@@ -415,9 +512,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       const errorPerfil = document.getElementById("profileApiError");
       const submit = document.getElementById("profileSubmit");
-      errorPerfil.hidden = true;
+      if (errorPerfil) errorPerfil.hidden = true;
       btnConfirmSaveProfile.disabled = true;
-      submit.disabled = true;
+      if (submit) submit.disabled = true;
       try {
         const respuesta = await fetch("/api/auth/perfil", {
           method: "PUT",
@@ -434,29 +531,32 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
 
         guardarUsuarioEnStorage(datosActualizados, token);
-        adaptarInterfazSegunRol(datosActualizados, true);
-        document.getElementById("profileForm").dispatchEvent(new Event("profile:synced"));
+        adaptarInterfazSegunRol(datosActualizados);
         if (window.bootstrap) bootstrap.Modal.getOrCreateInstance(document.getElementById("confirmProfileModal")).hide();
         if (typeof window.notify === "function") {
           window.notify("Perfil académico actualizado y guardado en la base de datos.");
         }
       } catch (error) {
-        errorPerfil.textContent = error.message || "Error al actualizar el perfil";
-        errorPerfil.hidden = false;
+        if (errorPerfil) {
+          errorPerfil.textContent = error.message || "Error al actualizar el perfil";
+          errorPerfil.hidden = false;
+        }
         if (window.bootstrap) bootstrap.Modal.getOrCreateInstance(document.getElementById("confirmProfileModal")).hide();
       } finally {
         btnConfirmSaveProfile.disabled = false;
-        submit.disabled = false;
+        if (submit) submit.disabled = false;
       }
     });
   }
+});
 
-  document.querySelectorAll('a[href="index.html"]').forEach((enlace) => {
-    if (enlace.textContent.trim() === "Cerrar sesión") {
-      enlace.addEventListener("click", (evento) => {
-        evento.preventDefault();
-        cerrarSesionMicrosoft();
-      });
-    }
-  });
+document.addEventListener("click", (evento) => {
+  const logoutTrigger = evento.target.closest('[data-action="logout"], a[href="index.html"]');
+  if (!logoutTrigger) {
+    return;
+  }
+  if (logoutTrigger.matches('[data-action="logout"]') || logoutTrigger.textContent.trim() === "Cerrar sesión") {
+    evento.preventDefault();
+    cerrarSesionMicrosoft();
+  }
 });
