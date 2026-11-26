@@ -1,0 +1,35 @@
+[
+  {
+    "titulo": "Cálculo y álgebra lineal",
+    "area": "Ciencias Básicas",
+    "descripcion": "Acompañamiento práctico en límites, derivadas, sistemas de ecuaciones lineales y matrices para primeros semestres.",
+    "tutorCorreo": "pablo02colonia@edukt.edu.co",
+    "horario": "Miércoles y viernes · 3:00–5:00 p. m.",
+    "modalidad": "Virtual",
+    "duracionHoras": 2,
+    "cuposDisponibles": 4,
+    "estado": "disponible"
+  },
+  {
+    "titulo": "HTML, CSS y JavaScript",
+    "area": "Programación Web",
+    "descripcion": "Tutoría entre pares sobre maquetación semántica, diseño responsivo con Bootstrap y manipulación del DOM con JavaScript.",
+    "tutorCorreo": "pablo02colonia@edukt.edu.co",
+    "horario": "Martes y jueves · 5:00–7:00 p. m.",
+    "modalidad": "Virtual",
+    "duracionHoras": 2,
+    "cuposDisponibles": 5,
+    "estado": "disponible"
+  },
+  {
+    "titulo": "Desarrollo Backend con Node.js y MongoDB",
+    "area": "Ingeniería de Software",
+    "descripcion": "Diseño de APIs REST con Express, modelado de esquemas en Mongoose y buenas prácticas de seguridad.",
+    "tutorCorreo": "miguel01delgado@edukt.edu.co",
+    "horario": "Lunes y jueves · 4:00–6:00 p. m.",
+    "modalidad": "Híbrida",
+    "duracionHoras": 2,
+    "cuposDisponibles": 3,
+    "estado": "disponible"
+  }
+]

@@ -1,0 +1,79 @@
+[
+  {
+    "nombre": "Miguel Delgado",
+    "correo": "miguel01delgado@edukt.edu.co",
+    "rol": "admin",
+    "programa": "Ingeniería de Sistemas",
+    "institucion": "Universidad Santiago de Cali",
+    "temasCompartir": [
+      "Arquitectura Web",
+      "Node.js",
+      "Bases de Datos NoSQL"
+    ],
+    "temasAprender": [
+      "Seguridad en la Nube",
+      "DevOps"
+    ],
+    "biografia": "Coordinador y administrador de la red comunitaria EDU-KT Free.",
+    "disponibilidad": [
+      "Lunes · 4:00–6:00 p. m.",
+      "Jueves · 2:00–4:00 p. m."
+    ],
+    "bancoHoras": {
+      "horasOfrecidas": 8,
+      "horasRecibidas": 2,
+      "saldoHoras": 8
+    }
+  },
+  {
+    "nombre": "Pablo Colonia",
+    "correo": "pablo02colonia@edukt.edu.co",
+    "rol": "tutor",
+    "programa": "Ingeniería de Sistemas",
+    "institucion": "Universidad Santiago de Cali",
+    "temasCompartir": [
+      "HTML5 semántico",
+      "CSS3 y diseño responsivo",
+      "JavaScript",
+      "Cálculo y álgebra lineal"
+    ],
+    "temasAprender": [
+      "Arquitectura de Software",
+      "Inglés conversacional"
+    ],
+    "biografia": "Profesor y tutor par en programación web y ciencias básicas dentro de EDU-KT Free.",
+    "disponibilidad": [
+      "Martes · 5:00–7:00 p. m.",
+      "Jueves · 5:00–7:00 p. m.",
+      "Viernes · 3:00–5:00 p. m."
+    ],
+    "bancoHoras": {
+      "horasOfrecidas": 6,
+      "horasRecibidas": 1,
+      "saldoHoras": 7
+    }
+  },
+  {
+    "nombre": "Camilo Jaramillo",
+    "correo": "camilo03jaramillo@edukt.edu.co",
+    "rol": "estudiante",
+    "programa": "Programación Web",
+    "institucion": "Universidad Santiago de Cali",
+    "temasCompartir": [],
+    "temasAprender": [
+      "JavaScript",
+      "Cálculo diferencial",
+      "Bases de Datos"
+    ],
+    "biografia": "Estudiante activo en la red comunitaria de aprendizaje colaborativo.",
+    "disponibilidad": [
+      "Lunes · 2:00–4:00 p. m.",
+      "Miércoles · 10:00 a. m.–12:00 m."
+    ],
+    "bancoHoras": {
+      "horasOfrecidas": 0,
+      "horasRecibidas": 2,
+      "saldoHoras": 4
+    }
+  }
+]

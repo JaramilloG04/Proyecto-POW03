@@ -1,0 +1,18 @@
+{
+  "name": "edukt-free-backend",
+  "version": "1.0.0",
+  "description": "API REST para EDU-KT Free - Plataforma comunitaria de tutorias entre pares",
+  "main": "src/app.js",
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch src/app.js",
+    "start": "node src/app.js",
+    "seed": "node src/seed.js"
+  },
+  "dependencies": {
+    "dotenv": "^18.0.8",
+    "express": "^5.3.0",
+    "jose": "^6.2.2",
+    "mongoose": "^9.11.2"
+  }
+}
