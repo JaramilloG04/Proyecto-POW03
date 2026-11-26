@@ -4,7 +4,8 @@ import {
   registrarUsuarioConMicrosoft,
   obtenerPerfilAutenticado,
   actualizarPerfilAutenticado,
-  listarUsuariosAdmin
+  listarUsuariosAdmin,
+  actualizarUsuarioAdmin
 } from "../controllers/auth.controller.js";
 import { verificarAutenticacion } from "../middlewares/auth.middleware.js";
 import { autorizarRoles } from "../middlewares/roles.middleware.js";
@@ -16,5 +17,7 @@ router.post("/registro", registrarUsuarioConMicrosoft);
 router.get("/perfil", verificarAutenticacion, obtenerPerfilAutenticado);
 router.put("/perfil", verificarAutenticacion, actualizarPerfilAutenticado);
 router.get("/usuarios", verificarAutenticacion, autorizarRoles("admin"), listarUsuariosAdmin);
+
+router.patch("/usuarios/:id", verificarAutenticacion, autorizarRoles("admin"), actualizarUsuarioAdmin);
 
 export default router;

@@ -17,6 +17,10 @@ En **EDU-KT Free** el acceso de los usuarios se gestiona a través de **Microsof
    - Tiene acceso completo para supervisar el funcionamiento de la plataforma.
    - Puede gestionar los usuarios registrados y moderar (crear, editar o eliminar) cualquier tutoría publicada en la red.
 
+4. **Estudiante y tutor (ambos):** combina las funciones de estudiante y tutor; solo puede modificar o eliminar sus propias tutorías.
+
+El rol inicial se elige durante el registro. Los cambios posteriores de rol y activación de cuentas se realizan desde administración. Las cuentas administrativas están protegidas: no se pueden modificar ni crear mediante el panel.
+
 ## Qué puede hacer cada rol
 
 | Acción en la plataforma | Visitante (Sin sesión) | Estudiante | Tutor | Administrador |
@@ -29,6 +33,8 @@ En **EDU-KT Free** el acceso de los usuarios se gestiona a través de **Microsof
 | Crear una nueva tutoría | No | No | Sí | Sí |
 | Editar o eliminar una tutoría | No | No | Solo las propias | Sí (todas) |
 | Consultar y administrar la lista de usuarios | No | No | No | Sí |
+| Cambiar rol o estado de cuentas no administrativas | No | No | No | Sí |
+| Editar datos académicos del propio perfil (sin modificar rol) | No | Sí | Sí | Sí |
 
 ## Cómo protege el sistema las vistas y las acciones
 

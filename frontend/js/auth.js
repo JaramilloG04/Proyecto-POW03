@@ -1,6 +1,6 @@
 const TOKEN_STORAGE_KEY = "edu-kt-free-id-token";
 const USER_STORAGE_KEY = "edu-kt-free-user";
-const PAGINAS_PROTEGIDAS = ["inicio.html", "perfil.html"];
+const PAGINAS_PROTEGIDAS = ["inicio.html", "perfil.html", "admin.html"];
 
 function obtenerNombreArchivoActual() {
   const ruta = window.location.pathname;
@@ -164,7 +164,8 @@ export function cerrarSesionMicrosoft() {
   window.location.replace("index.html");
 }
 
-function adaptarInterfazSegunRol(usuario) {
+function adaptarInterfazSegunRol(usuario, verificado = false) {
+  document.querySelectorAll("[data-admin-only]").forEach(el => { el.hidden = !verificado || usuario.rol !== "admin"; });
   const mapaRoles = {
     admin: "Administrador",
     tutor: "Tutor",
@@ -205,8 +206,8 @@ function adaptarInterfazSegunRol(usuario) {
     profileSummary.textContent = usuario.programa ? `${textoRol} · ${usuario.programa}` : textoRol;
   }
   if (fullNameInput) fullNameInput.value = usuario.nombre || "";
-  if (programInput && usuario.programa) programInput.value = usuario.programa;
-  if (institutionInput && usuario.institucion) institutionInput.value = usuario.institucion;
+  if (programInput) programInput.value = usuario.programa || "";
+  if (institutionInput) institutionInput.value = usuario.institucion || "";
   if (roleSelect) {
     if (usuario.rol === "admin" && ![...roleSelect.options].some((o) => o.value === "admin")) {
       roleSelect.add(new Option("Administrador", "admin"));
@@ -219,9 +220,7 @@ function adaptarInterfazSegunRol(usuario) {
   if (learningInput && Array.isArray(usuario.temasAprender)) {
     learningInput.value = usuario.temasAprender.join(", ");
   }
-  if (bioInput && usuario.biografia) {
-    bioInput.value = usuario.biografia;
-  }
+  if (bioInput) bioInput.value = usuario.biografia || "";
 
   // Restricción de interfaz por rol (C3): oculta controles exclusivos de tutor para estudiantes
   if (usuario.rol === "estudiante") {
@@ -297,13 +296,13 @@ async function verificarAccesoPagina() {
       }
 
       const usuarioCache = obtenerUsuarioSesion();
-      if (usuarioCache) {
+      if (usuarioCache && paginaActual !== "admin.html") {
         adaptarInterfazSegunRol(usuarioCache);
-        document.documentElement.style.visibility = "visible";
       }
 
       const usuarioVerificado = await sincronizarPerfilConBackend(token);
-      adaptarInterfazSegunRol(usuarioVerificado);
+      adaptarInterfazSegunRol(usuarioVerificado, true);
+      if (paginaActual === "perfil.html") document.getElementById("profileForm")?.dispatchEvent(new Event("profile:synced"));
       document.documentElement.style.visibility = "visible";
       return;
     }
@@ -320,7 +319,7 @@ async function verificarAccesoPagina() {
       }
 
       const usuarioVerificado = await sincronizarPerfilConBackend(token);
-      adaptarInterfazSegunRol(usuarioVerificado);
+      adaptarInterfazSegunRol(usuarioVerificado, true);
     }
   } catch {
     if (esProtegida) {
@@ -395,7 +394,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const btnConfirmSaveProfile = document.getElementById("confirmSave");
   if (btnConfirmSaveProfile) {
-    btnConfirmSaveProfile.addEventListener("click", async () => {
+    document.getElementById("profileForm").addEventListener("profile:save", async () => {
       const token = obtenerTokenSesion();
       if (!token) return;
 
@@ -409,12 +408,16 @@ document.addEventListener("DOMContentLoaded", async () => {
         nombre: document.getElementById("fullName")?.value.trim(),
         programa: document.getElementById("program")?.value.trim(),
         institucion: document.getElementById("institution")?.value.trim(),
-        rol: document.getElementById("role")?.value,
         temasCompartir: separarPorComas(document.getElementById("topics")?.value),
         temasAprender: separarPorComas(document.getElementById("learning")?.value),
         biografia: document.getElementById("bio")?.value.trim()
       };
 
+      const errorPerfil = document.getElementById("profileApiError");
+      const submit = document.getElementById("profileSubmit");
+      errorPerfil.hidden = true;
+      btnConfirmSaveProfile.disabled = true;
+      submit.disabled = true;
       try {
         const respuesta = await fetch("/api/auth/perfil", {
           method: "PUT",
@@ -431,14 +434,19 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
 
         guardarUsuarioEnStorage(datosActualizados, token);
-        adaptarInterfazSegunRol(datosActualizados);
+        adaptarInterfazSegunRol(datosActualizados, true);
+        document.getElementById("profileForm").dispatchEvent(new Event("profile:synced"));
+        if (window.bootstrap) bootstrap.Modal.getOrCreateInstance(document.getElementById("confirmProfileModal")).hide();
         if (typeof window.notify === "function") {
           window.notify("Perfil académico actualizado y guardado en la base de datos.");
         }
       } catch (error) {
-        if (typeof window.notify === "function") {
-          window.notify(error.message || "Error al actualizar el perfil");
-        }
+        errorPerfil.textContent = error.message || "Error al actualizar el perfil";
+        errorPerfil.hidden = false;
+        if (window.bootstrap) bootstrap.Modal.getOrCreateInstance(document.getElementById("confirmProfileModal")).hide();
+      } finally {
+        btnConfirmSaveProfile.disabled = false;
+        submit.disabled = false;
       }
     });
   }

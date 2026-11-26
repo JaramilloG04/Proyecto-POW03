@@ -24,6 +24,7 @@
         <ul class="navbar-nav ms-auto align-items-lg-center gap-2 gap-lg-1 pb-3 pb-lg-0">
           <li class="nav-item"><a class="nav-link" href="inicio.html">Mi panel</a></li>
           <li class="nav-item"><a class="nav-link active" href="perfil.html" aria-current="page">Mi perfil</a></li>
+          <li class="nav-item" data-admin-only hidden><a class="nav-link" href="admin.html">Administración</a></li>
           <li class="nav-item"><a class="nav-link" href="index.html">Cerrar sesión</a></li>
           <li class="nav-item ms-lg-2"><button id="themeToggle" class="btn btn-sm btn-light border" type="button" aria-label="Cambiar a modo oscuro" title="Cambiar a modo oscuro"><i class="bi bi-moon-stars-fill" aria-hidden="true"></i></button></li>
         </ul>
@@ -52,6 +53,7 @@
               <form id="profileForm" novalidate>
                 <p class="small muted-custom">Los campos marcados como «obligatorio» son necesarios para guardar tu perfil. Antes de guardar te mostraremos un resumen de los cambios.</p>
                 <div class="alert alert-danger form-error-summary" role="alert" hidden></div>
+                <div id="profileApiError" class="alert alert-danger" role="alert" hidden></div>
 
                 <!-- 1.3.1 Los campos relacionados se agrupan con fieldset y legend -->
                 <fieldset class="mb-4">
@@ -60,7 +62,7 @@
                     <div class="col-md-6"><label class="form-label" for="fullName">Nombre completo <span class="required-hint">(obligatorio)</span></label><input class="form-control" id="fullName" name="name" type="text" autocomplete="name" value="Juan Camilo Jaramillo" required></div>
                     <div class="col-md-6"><label class="form-label" for="program">Programa académico</label><input class="form-control" id="program" name="program" type="text" value="Programación Web"></div>
                     <div class="col-md-6"><label class="form-label" for="institution">Institución educativa</label><input class="form-control" id="institution" name="institution" type="text" autocomplete="organization" aria-describedby="institutionHelp"><div id="institutionHelp" class="form-text">Escribe el nombre completo, sin siglas.</div></div>
-                    <div class="col-md-6"><label class="form-label" for="role">Rol dentro de la red <span class="required-hint">(obligatorio)</span></label><select class="form-select" id="role" name="role" required><option value="ambos">Estudiante y tutor</option><option value="estudiante">Estudiante</option><option value="tutor">Tutor</option></select></div>
+                    <div class="col-md-6"><label class="form-label" for="role">Rol dentro de la red</label><select class="form-select" id="role" name="role" disabled aria-describedby="roleHelp"><option value="ambos">Estudiante y tutor</option><option value="estudiante">Estudiante</option><option value="tutor">Tutor</option></select><div id="roleHelp" class="form-text">Tu rol solo puede cambiarlo un administrador.</div></div>
                   </div>
                 </fieldset>
 

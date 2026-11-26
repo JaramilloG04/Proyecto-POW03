@@ -390,16 +390,8 @@ if (profileForm) {
     ? bootstrap.Modal.getOrCreateInstance(confirmModalElement)
     : null;
 
-  const saveProfile = () => {
-    savedValues = takeSnapshot();
-    updateProfileHeader();
-    storage.set('sessionStorage', REGISTRATION_KEY, JSON.stringify({
-      ...registration,
-      name: nameInput.value.trim(),
-      role: roleSelect.value,
-    }));
-    notify('Cambios de perfil guardados solo para esta demostración.');
-  };
+  profileForm.addEventListener("profile:synced", () => { savedValues = takeSnapshot(); });
+  const saveProfile = () => profileForm.dispatchEvent(new Event("profile:save"));
 
   profileForm.addEventListener('submit', (event) => {
     event.preventDefault();
@@ -433,7 +425,6 @@ if (profileForm) {
   });
 
   document.getElementById('confirmSave')?.addEventListener('click', () => {
-    confirmModal?.hide();
     saveProfile();
   });
 
