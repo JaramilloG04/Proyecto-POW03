@@ -1,8 +1,7 @@
-import { createRemoteJWKSet, jwtVerify } from "jose";
+import { verificarIdentidadMicrosoft } from "../config/identidad.js";
 import { entraConfig } from "../config/entra.js";
 import Usuario from "../models/Usuario.js";
 
-const JWKS = createRemoteJWKSet(new URL(entraConfig.jwksUri));
 
 export function obtenerConfigEntra(req, res) {
   res.json({
@@ -13,80 +12,32 @@ export function obtenerConfigEntra(req, res) {
 }
 
 export async function registrarUsuarioConMicrosoft(req, res) {
+  let identidad;
   try {
-    const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return res.status(401).json({
-        mensaje: "Se requiere autenticación con Microsoft Entra ID para crear la cuenta"
-      });
+    identidad = await verificarIdentidadMicrosoft(req.headers.authorization);
+  } catch {
+    return res.status(401).json({ mensaje: "Inicia sesión con una cuenta válida de Microsoft del directorio autorizado" });
+  }
+  try {
+    const { nombre, rol } = req.body || {};
+    if (typeof nombre !== "string" || !nombre.trim() || nombre.trim().length > 120) {
+      return res.status(400).json({ mensaje: "Escribe un nombre válido de hasta 120 caracteres" });
     }
-
-    const token = authHeader.split(" ")[1];
-    const { payload } = await jwtVerify(token, JWKS, {
-      audience: entraConfig.clientId
-    });
-
-    const correo = (
-      payload.email ||
-      payload.preferred_username ||
-      payload.upn ||
-      ""
-    ).toLowerCase();
-
-    if (!correo) {
-      return res.status(400).json({
-        mensaje: "La cuenta de Microsoft no proporcionó un correo válido"
-      });
+    if (!["estudiante", "tutor", "ambos"].includes(rol)) {
+      return res.status(400).json({ mensaje: "Selecciona un rol válido: estudiante, tutor o ambos" });
     }
-
-    const entraId = payload.oid || payload.sub;
-    const prefijo = correo.split("@")[0].replace(/\.edukt$/i, "");
-    const correoCanonico = `${prefijo}@edukt.edu.co`;
-    const { nombre, rol } = req.body;
-
-    const rolesPermitidosEnRegistro = ["estudiante", "tutor", "ambos"];
-    if (!rol || !rolesPermitidosEnRegistro.includes(rol)) {
-      return res.status(400).json({
-        mensaje: "Debes seleccionar un rol válido (estudiante, tutor o ambos)"
-      });
+    const { entraId, correo, correoCanonico } = identidad;
+    const existente = await Usuario.exists({ $or: [{ entraId }, { correo }, { correo: correoCanonico }] });
+    if (existente) {
+      return res.status(409).json({ mensaje: "Esta cuenta ya está registrada. Utiliza Ingresar." });
     }
-
-    const nombreFinal = (nombre || payload.name || prefijo).trim();
-    if (!nombreFinal) {
-      return res.status(400).json({
-        mensaje: "El nombre completo es obligatorio"
-      });
-    }
-
-    let usuario = await Usuario.findOne({
-      $or: [{ entraId }, { correo }, { correo: correoCanonico }]
-    });
-
-    if (usuario) {
-      if (usuario.rol === "admin") {
-        return res.status(409).json({
-          mensaje: "Esta cuenta de administrador ya está registrada. Inicia sesión desde Ingresar."
-        });
-      }
-      usuario.nombre = nombreFinal;
-      usuario.rol = rol;
-      usuario.entraId = entraId;
-      await usuario.save();
-      return res.status(200).json(usuario);
-    }
-
-    usuario = await Usuario.create({
-      entraId,
-      nombre: nombreFinal,
-      correo: correoCanonico,
-      rol
-    });
-
-    res.status(201).json(usuario);
+    const usuario = await Usuario.create({ entraId, nombre: nombre.trim(), correo: correoCanonico, rol });
+    return res.status(201).json(usuario);
   } catch (error) {
-    res.status(400).json({
-      mensaje: error.message || "No se pudo completar el registro con Microsoft Entra ID"
-    });
+    if (error.code === 11000) return res.status(409).json({ mensaje: "Esta cuenta ya está registrada" });
+    if (error.name === "ValidationError") return res.status(400).json({ mensaje: error.message });
+    console.error("Error en registro:", error);
+    return res.status(500).json({ mensaje: "No se pudo crear la cuenta" });
   }
 }
 

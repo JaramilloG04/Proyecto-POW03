@@ -1,72 +1,35 @@
-import { createRemoteJWKSet, jwtVerify } from "jose";
-import { entraConfig } from "../config/entra.js";
+import { verificarIdentidadMicrosoft } from "../config/identidad.js";
 import Usuario from "../models/Usuario.js";
 
-const JWKS = createRemoteJWKSet(new URL(entraConfig.jwksUri));
-
-function obtenerCorreoCanonicodeDirectorio(correoToken) {
-  const prefijo = correoToken.split("@")[0].replace(/\.edukt$/i, "");
-  return `${prefijo}@edukt.edu.co`;
-}
-
 export async function verificarAutenticacion(req, res, next) {
+  let identidad;
   try {
-    const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return res.status(401).json({
-        mensaje: "No autenticado. Se requiere iniciar sesión con Microsoft Entra ID"
-      });
-    }
-
-    const token = authHeader.split(" ")[1];
-    if (!token) {
-      return res.status(401).json({
-        mensaje: "Token de autenticación no proporcionado"
-      });
-    }
-
-    const { payload } = await jwtVerify(token, JWKS, {
-      audience: entraConfig.clientId
-    });
-
-    const correo = (
-      payload.email ||
-      payload.preferred_username ||
-      payload.upn ||
-      ""
-    ).toLowerCase();
-
-    const correoCanonico = obtenerCorreoCanonicodeDirectorio(correo);
-    const entraId = payload.oid || payload.sub;
-
-    const usuario = await Usuario.findOne({
-      $or: [{ entraId }, { correo }, { correo: correoCanonico }]
-    });
-
+    identidad = await verificarIdentidadMicrosoft(req.headers.authorization);
+  } catch {
+    return res.status(401).json({ mensaje: "Token inválido, expirado o fuera del directorio autorizado" });
+  }
+  try {
+    const { entraId, correo, correoCanonico, payload } = identidad;
+    let usuario = await Usuario.findOne({ entraId });
     if (!usuario) {
-      return res.status(403).json({
-        mensaje: "Acceso denegado. Tu cuenta no está autorizada en la plataforma EDU-KT Free"
-      });
+      // Compatibilidad con las cuentas iniciales todavía sin identificador de Entra.
+      // No se permite tomar una cuenta previamente vinculada a otra identidad.
+      const candidatas = await Usuario.find({ entraId: null, $or: [{ correo }, { correo: correoCanonico }] }).limit(2);
+      if (candidatas.length === 1 && candidatas[0].activo) {
+        usuario = await Usuario.findOneAndUpdate(
+          { _id: candidatas[0]._id, entraId: null, activo: true },
+          { $set: { entraId } }, { new: true, runValidators: true }
+        );
+      }
     }
-
-    if (!usuario.entraId && entraId) {
-      usuario.entraId = entraId;
-      await usuario.save();
+    if (!usuario || !usuario.activo) {
+      return res.status(403).json({ mensaje: "Acceso denegado. La cuenta no está autorizada o está desactivada" });
     }
-
-    if (!usuario.activo) {
-      return res.status(403).json({
-        mensaje: "La cuenta de usuario se encuentra desactivada"
-      });
-    }
-
     req.usuario = usuario;
     req.tokenPayload = payload;
     next();
   } catch (error) {
-    return res.status(401).json({
-      mensaje: "Token inválido o expirado",
-      detalle: error.message
-    });
+    console.error("Error al consultar identidad:", error);
+    return res.status(500).json({ mensaje: "No se pudo verificar el usuario" });
   }
 }
