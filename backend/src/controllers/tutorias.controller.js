@@ -12,6 +12,7 @@ function datosTutoria(body) {
 }
 
 function responderError(res, error) {
+  if (error.status) return res.status(error.status).json({ mensaje: error.message });
   if (["ValidationError", "CastError"].includes(error.name)) {
     return res.status(400).json({ mensaje: error.message });
   }
@@ -81,14 +82,15 @@ export async function actualizarTutoria(req, res) {
 
 export async function eliminarTutoria(req, res) {
   try {
-    // Conserva la integridad de las solicitudes existentes.
-    if (await Solicitud.exists({ tutoria: req.params.id })) {
-      return res.status(409).json({
-        mensaje: "Esta tutoría tiene solicitudes asociadas. Puedes cambiar su estado a cancelada."
-      });
-    }
-    const tutoria = await Tutoria.findOneAndDelete(filtroEdicion(req));
-    if (!tutoria) return res.status(404).json({ mensaje: "Tutoría no encontrada" });
+    // La creación de solicitudes escribe en la misma tutoría: una transacción
+    // evita que una eliminación concurrente deje una solicitud huérfana.
+    await mongoose.connection.transaction(async session => {
+      const tutoria = await Tutoria.findOneAndDelete(filtroEdicion(req), { session });
+      if (!tutoria) throw Object.assign(new Error("Tutoría no encontrada"), { status: 404 });
+      if (await Solicitud.exists({ tutoria: req.params.id }).session(session)) {
+        throw Object.assign(new Error("Esta tutoría tiene solicitudes asociadas. Puedes cambiar su estado a cancelada."), { status: 409 });
+      }
+    });
     res.status(204).end();
   } catch (error) { responderError(res, error); }
 }

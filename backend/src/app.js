@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 import { conectarDB } from "./config/db.js";
 import authRoutes from "./routes/auth.routes.js";
 import tutoriasRoutes from "./routes/tutorias.routes.js";
+import solicitudesRoutes from "./routes/solicitudes.routes.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -30,9 +31,18 @@ app.get("/api/health", (req, res) => {
 
 app.use("/api/auth", authRoutes);
 app.use("/api/tutorias", tutoriasRoutes);
+app.use("/api/solicitudes", solicitudesRoutes);
 
 app.use((req, res) => {
   res.status(404).json({ mensaje: "Ruta no encontrada" });
+});
+
+app.use((error, req, res, next) => {
+  if (res.headersSent) return next(error);
+  if (error.type === "entity.parse.failed") return res.status(400).json({ mensaje: "El cuerpo JSON no es válido" });
+  if (error.type === "entity.too.large") return res.status(413).json({ mensaje: "El cuerpo de la solicitud es demasiado grande" });
+  console.error("Error interno:", error);
+  return res.status(500).json({ mensaje: "Error interno del servidor" });
 });
 
 const PORT = process.env.PORT || 3000;

@@ -36,9 +36,9 @@
   <main id="contenido" tabindex="-1" class="dashboard-section min-vh-100 py-5">
     <div class="container">
       <div class="d-flex flex-wrap align-items-end justify-content-between gap-3 mb-4">
-        <div><p class="eyebrow mb-2">Vista previa navegable</p><h1 class="h2 fw-bold mb-0">Tu espacio en EDU-KT <span lang="en">Free</span></h1></div>
+        <div><p class="eyebrow mb-2">Comunidad de aprendizaje</p><h1 class="h2 fw-bold mb-0">Tu espacio en EDU-KT <span lang="en">Free</span></h1></div>
         <!-- 3.2.4 Identificación consistente: todos los botones «Solicitar tutoría» hacen lo mismo (abren el formulario) -->
-        <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#solicitudModal"><i class="bi bi-plus-lg me-2" aria-hidden="true"></i>Solicitar tutoría</button>
+        <a class="btn btn-primary" href="#tutorias"><i class="bi bi-search me-2" aria-hidden="true"></i>Explorar tutorías</a>
       </div>
 
       <div class="row g-4">
@@ -52,9 +52,10 @@
               <!-- 4.1.2 La sección actual se comunica con aria-current, no solo con estilo (se actualiza en app.js) -->
               <a class="nav-link active" href="#resumen" aria-current="location"><i class="bi bi-grid-1x2 me-2" aria-hidden="true"></i>Resumen</a>
               <a class="nav-link" href="#tutorias"><i class="bi bi-calendar-week me-2" aria-hidden="true"></i>Tutorías</a>
+              <a class="nav-link" href="#solicitudes"><i class="bi bi-inbox me-2" aria-hidden="true"></i>Solicitudes</a>
               <a class="nav-link" href="#disponibilidad"><i class="bi bi-clock me-2" aria-hidden="true"></i>Disponibilidad</a>
               <!-- 1.1 El número del distintivo tiene texto alternativo -->
-              <a class="nav-link" href="#mensajes"><i class="bi bi-chat-dots me-2" aria-hidden="true"></i>Mensajes <span class="badge text-bg-primary float-end">2<span class="visually-hidden"> mensajes nuevos</span></span></a>
+              <a class="nav-link" href="#mensajes"><i class="bi bi-chat-dots me-2" aria-hidden="true"></i>Mensajes (demo)</a>
               <a class="nav-link" href="perfil.html"><i class="bi bi-person-gear me-2" aria-hidden="true"></i>Mi perfil</a>
             </nav>
           </div>
@@ -65,9 +66,9 @@
             <!-- 1.3.1 Encabezado oculto visualmente para que la sección tenga nombre y la jerarquía h1 > h2 sea completa -->
             <h2 id="resumen-titulo" class="visually-hidden">Resumen de tu actividad</h2>
             <div class="row g-3">
-              <div class="col-md-4"><div class="card dashboard-card p-3 h-100"><small class="muted-custom">Tutorías este mes</small><p class="display-6 fw-bold text-primary mb-0">04</p><small class="text-success"><i class="bi bi-arrow-up-right" aria-hidden="true"></i> Dos completadas</small></div></div>
-              <div class="col-md-4"><div class="card dashboard-card p-3 h-100"><small class="muted-custom">Horas compartidas</small><p class="display-6 fw-bold text-primary mb-0">06 <abbr title="horas">h</abbr></p><small class="muted-custom">Aporte a la comunidad</small></div></div>
-              <div class="col-md-4"><div class="card dashboard-card p-3 h-100"><small class="muted-custom">Próximo encuentro</small><p class="h5 fw-bold mb-1">Matemáticas</p><small class="muted-custom">Hoy · 4:00 p. m.</small></div></div>
+              <div class="col-md-4"><div class="card dashboard-card p-3 h-100"><small class="muted-custom">Solicitudes enviadas</small><p id="resumenEnviadas" class="display-6 fw-bold text-primary mb-0">—</p></div></div>
+              <div class="col-md-4"><div class="card dashboard-card p-3 h-100"><small class="muted-custom">Solicitudes recibidas</small><p id="resumenRecibidas" class="display-6 fw-bold text-primary mb-0">—</p></div></div>
+              <div class="col-md-4"><div class="card dashboard-card p-3 h-100"><small class="muted-custom">Solicitudes completadas</small><p id="resumenCompletadas" class="display-6 fw-bold text-primary mb-0">—</p></div></div>
             </div>
           </section>
 
@@ -109,12 +110,24 @@
             </div>
           </section>
 
+          <section id="solicitudes" class="card dashboard-card mb-4" aria-labelledby="solicitudesTitulo">
+            <div class="card-body p-4">
+              <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+                <h2 id="solicitudesTitulo" class="h5 fw-bold mb-0" tabindex="-1">Mis solicitudes</h2>
+                <button id="recargarSolicitudes" type="button" class="btn btn-outline-primary btn-sm">Actualizar</button>
+              </div>
+              <p id="solicitudesEstado" role="status" aria-live="polite">Cargando solicitudes…</p>
+              <div id="solicitudesError" class="alert alert-danger" role="alert" hidden></div>
+              <section aria-labelledby="enviadasTitulo"><h3 id="enviadasTitulo" class="h6">Enviadas</h3><ul id="solicitudesEnviadas" class="list-unstyled d-grid gap-2"></ul></section>
+              <section aria-labelledby="recibidasTitulo"><h3 id="recibidasTitulo" class="h6">Recibidas</h3><ul id="solicitudesRecibidas" class="list-unstyled d-grid gap-2 mb-0"></ul></section>
+            </div>
+          </section>
           <div class="row g-4">
             <section class="col-md-6" id="disponibilidad" aria-labelledby="disponibilidad-titulo">
               <div class="card dashboard-card h-100">
                 <div class="card-body p-4">
                   <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
-                    <h2 id="disponibilidad-titulo" class="h5 fw-bold mb-0">Mi disponibilidad</h2>
+                    <h2 id="disponibilidad-titulo" class="h5 fw-bold mb-0">Mi disponibilidad (demo)</h2>
                     <!-- 3.2 Predecible: el botón dice exactamente lo que hace -->
                     <button class="btn btn-sm btn-outline-primary" type="button" id="addSchedule"><i class="bi bi-plus-lg me-1" aria-hidden="true"></i>Agregar horario</button>
                   </div>
@@ -128,7 +141,7 @@
             <section class="col-md-6" id="mensajes" aria-labelledby="mensajes-titulo">
               <div class="card dashboard-card h-100">
                 <div class="card-body p-4">
-                  <div class="d-flex justify-content-between align-items-center mb-2"><h2 id="mensajes-titulo" class="h5 fw-bold mb-0">Mensajes</h2><span class="badge text-bg-primary">2 nuevos</span></div>
+                  <div class="d-flex justify-content-between align-items-center mb-2"><h2 id="mensajes-titulo" class="h5 fw-bold mb-0">Mensajes (demo)</h2></div>
                   <ul class="list-unstyled mb-0">
                     <li class="message-item"><div class="d-flex justify-content-between"><strong class="small">Laura Martínez</strong><small class="muted-custom">10:20</small></div><p class="small muted-custom mb-0">¡Hola! Confirmo nuestra tutoría para hoy.</p></li>
                     <li class="message-item"><div class="d-flex justify-content-between"><strong class="small">David Velasco</strong><small class="muted-custom">Ayer</small></div><p class="small muted-custom mb-0">Te comparto el recurso para practicar CSS.</p></li>
@@ -163,22 +176,22 @@
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content border-0 shadow">
         <div class="modal-header border-0"><h2 class="modal-title fs-5 fw-bold" id="solicitudModalLabel">Solicitar una tutoría</h2><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button></div>
-        <form id="requestForm" novalidate>
+        <form id="requestForm">
           <div class="modal-body pt-0">
             <p class="small muted-custom">Todos los campos son obligatorios.</p>
-            <div class="alert alert-danger form-error-summary" role="alert" hidden></div>
+            <div id="requestError" class="alert alert-danger" role="alert" hidden></div>
             <div class="mb-3">
               <label class="form-label" for="subjectRequest">Tema que deseas reforzar</label>
-              <input id="subjectRequest" name="subject" class="form-control" type="text" required aria-describedby="subjectRequestHelp">
+              <input id="subjectRequest" name="subject" class="form-control" type="text" maxlength="120" required aria-describedby="subjectRequestHelp">
               <div id="subjectRequestHelp" class="form-text">Ejemplo: límites y derivadas.</div>
             </div>
             <div class="mb-3">
               <label class="form-label" for="detailRequest">Mensaje para el tutor</label>
-              <textarea id="detailRequest" name="detail" class="form-control" rows="3" minlength="10" required aria-describedby="detailRequestHelp"></textarea>
+              <textarea id="detailRequest" name="detail" class="form-control" rows="3" minlength="10" maxlength="1000" required aria-describedby="detailRequestHelp"></textarea>
               <div id="detailRequestHelp" class="form-text">Cuéntale brevemente qué necesitas (mínimo 10 caracteres).</div>
             </div>
           </div>
-          <div class="modal-footer border-0"><button type="submit" class="btn btn-primary w-100">Enviar solicitud</button></div>
+          <div class="modal-footer border-0"><button id="sendRequest" type="submit" class="btn btn-primary w-100">Enviar solicitud</button></div>
         </form>
       </div>
     </div>
@@ -192,5 +205,6 @@
   <script src="js/app.js"></script>
   <script type="module" src="js/auth.js"></script>
   <script type="module" src="js/tutorias.js"></script>
+  <script type="module" src="js/solicitudes.js"></script>
 </body>
 </html>

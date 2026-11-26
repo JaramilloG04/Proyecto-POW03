@@ -439,42 +439,6 @@ if (profileForm) {
 // 3.2.4 Todos los botones «Solicitar tutoría» abren el mismo formulario.
 // ============================================================
 
-const requestModalElement = document.getElementById('solicitudModal');
-const requestForm = document.getElementById('requestForm');
-let selectedTutor = '';
-
-requestModalElement?.addEventListener('show.bs.modal', (event) => {
-  selectedTutor = event.relatedTarget?.dataset.tutor || '';
-  document.getElementById('solicitudModalLabel').textContent = selectedTutor
-    ? `Solicitar tutoría con ${selectedTutor}`
-    : 'Solicitar una tutoría';
-});
-
-// Cada vez que se abre, el formulario empieza limpio (comportamiento predecible).
-requestModalElement?.addEventListener('hidden.bs.modal', () => {
-  requestForm?.reset();
-  if (requestForm) {
-    resetValidation(requestForm);
-  }
-});
-
-requestForm?.addEventListener('submit', (event) => {
-  event.preventDefault();
-
-  if (!validateForm(requestForm)) {
-    return;
-  }
-
-  const tutor = selectedTutor;
-  if (window.bootstrap) {
-    bootstrap.Modal.getOrCreateInstance(requestModalElement).hide();
-  }
-  notify(tutor
-    ? `Solicitud enviada a ${tutor}. En una versión completa recibirá tu mensaje.`
-    : 'Solicitud enviada. En una versión completa llegará a la persona tutora.');
-});
-
-// ============================================================
 // Disponibilidad y mensajes
 // ============================================================
 

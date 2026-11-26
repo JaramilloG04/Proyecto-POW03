@@ -116,11 +116,13 @@ function tarjeta(tutoria) {
   acciones.append(boton("Ver detalles", "btn btn-outline-primary btn-sm", tutoria.titulo,
     e => verDetalle(tutoria._id, e.currentTarget)));
   if (["estudiante", "ambos"].includes(usuario.rol) && tutoria.estado === "disponible" &&
-      tutoria.cuposDisponibles > 0 && tutoria.tutor?._id !== usuario._id) {
-    const solicitar = boton("Solicitar tutoría (demo)", "btn btn-outline-primary btn-sm", tutoria.titulo, () => {});
+      tutoria.cuposDisponibles > 0 && tutoria.tutor?._id && tutoria.tutor._id !== usuario._id) {
+    const solicitar = boton("Solicitar tutoría", "btn btn-outline-primary btn-sm", tutoria.titulo, () => {});
     solicitar.dataset.bsToggle = "modal";
     solicitar.dataset.bsTarget = "#solicitudModal";
     solicitar.dataset.tutor = nombre;
+    solicitar.dataset.tutoriaId = tutoria._id;
+    solicitar.dataset.titulo = tutoria.titulo;
     acciones.append(solicitar);
   }
   if (puedeGestionar(tutoria)) {
@@ -220,4 +222,5 @@ async function iniciar() {
   }
 }
 
+document.addEventListener("solicitudes:actualizadas", () => { if (usuario) cargar(); });
 iniciar();
