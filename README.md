@@ -26,7 +26,7 @@ En Entra ID, la aplicación debe admitir el flujo SPA de MSAL y tener registrada
 
 Cliente HTML5, Bootstrap y JavaScript con fetch → API REST Express (autenticación y roles, rutas, controladores) → Mongoose → MongoDB Atlas. MSAL obtiene el ID token de Entra ID; el servidor comprueba firma, audiencia, emisor, tenant y vigencia, y consulta el rol y estado de la cuenta en MongoDB en cada petición protegida. El cierre de sesión local limpia sessionStorage; no revoca el token en Microsoft. Para producción se recomienda migrar la API a access tokens con audiencia y permisos propios y revisar el enlace de cuentas semilla sin identidad asignada.
 
-El CRUD principal es Tutoría. También se implementaron registro, perfil y administración de cuentas. La solicitud de tutorías, mensajería y algunos indicadores del panel principal todavía incluyen demostraciones; no se presentan como funcionalidades persistentes completas.
+El CRUD principal es Tutoría. También se implementaron registro, perfil y administración de cuentas. Las solicitudes de tutorías y los indicadores correspondientes del panel principal se consultan en MongoDB. La mensajería, disponibilidad de ejemplo y el banco de horas automático permanecen pendientes; no se presentan como funcionalidades persistentes completas. Atlas debe admitir transacciones (replica set o clúster compatible) para crear, aceptar solicitudes y eliminar tutorías de forma coherente.
 
 ## Documentación
 

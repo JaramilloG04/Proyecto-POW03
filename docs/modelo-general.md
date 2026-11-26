@@ -1,6 +1,6 @@
 # Modelo General - EDU-KT Free
 
-El modelo Solicitud existe en MongoDB; su flujo web aún es una demostración. El rol ambos combina estudiante y tutor. Los usuarios también almacenan entraId y activo.
+El modelo Solicitud tiene un flujo web implementado con persistencia en MongoDB, pendiente de pruebas reales. El rol ambos combina estudiante y tutor. Los usuarios también almacenan entraId y activo.
 
 Este documento describe cómo se organiza y guarda la información de la plataforma en la base de datos (**MongoDB Atlas**). La idea principal es separar el inicio de sesión (que se maneja de forma segura con **Microsoft Entra ID**) de los datos académicos y de las tutorías que usa la página en el día a día.
 
@@ -68,3 +68,5 @@ Representa los espacios de acompañamiento publicados en la plataforma:
 Guarda los mensajes y peticiones cuando un estudiante solicita apoyo en una tutoría:
 - Conecta al estudiante que pide la ayuda con el tutor y la tutoría seleccionada.
 - Registra el tema específico que el estudiante necesita reforzar, un mensaje breve para coordinar el encuentro y el estado de la solicitud (pendiente, aceptada, completada o rechazada).
+
+La aceptación de una solicitud pendiente descuenta un cupo de la tutoría en una transacción. El banco de horas no se modifica automáticamente. Los registros previos no se recalculan.

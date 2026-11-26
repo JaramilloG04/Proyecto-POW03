@@ -6,11 +6,11 @@ En **EDU-KT Free** el acceso de los usuarios se gestiona a través de **Microsof
 
 1. **Estudiante:**
    - Puede explorar las tutorías disponibles en la comunidad y consultar sus detalles.
-   - La interfaz de solicitudes es una demostración pendiente de integración persistente.
+   - Puede solicitar tutorías de otros usuarios y consultar sus propias solicitudes enviadas.
    - Puede ver y actualizar la información de su propio perfil académico.
 
 2. **Tutor:**
-   - Además de consultar tutorías y gestionar su perfil, puede publicar tutorías. La disponibilidad del panel principal es una demostración.
+   - Además de consultar tutorías y gestionar su perfil, puede publicar tutorías. Puede aceptar, rechazar o completar las solicitudes que recibe. La disponibilidad del panel principal es una demostración.
    - Puede crear nuevas ofertas de tutoría, así como editar o eliminar únicamente las tutorías que él mismo haya publicado.
 
 3. **Administrador:**
@@ -34,8 +34,11 @@ El rol inicial se elige durante el registro. Los cambios posteriores de rol y ac
 | Consultar usuarios y entrar a administración | No | No | No | No | Sí |
 | Cambiar rol o estado de cuentas no administrativas | No | No | No | No | Sí |
 | Crear o editar cuentas administrativas desde la web | No | No | No | No | No |
+| Enviar solicitud a otra tutoría | No | Sí | No | Sí | No |
+| Consultar solicitudes en las que participa | No | Sí | Sí | Sí | Sí |
+| Aceptar, rechazar o completar solicitudes recibidas | No | No | Sí | Sí | Sí (solo las recibidas) |
 
-La eliminación de tutorías con solicitudes asociadas se restringe para todos los roles. La disponibilidad, las solicitudes y la mensajería del cliente aún no tienen un flujo persistente completo.
+La eliminación de tutorías con solicitudes asociadas se restringe para todos los roles. La disponibilidad de ejemplo, la mensajería y el intercambio automático de horas aún no tienen un flujo persistente completo.
 
 ## Cómo protege el sistema las vistas y las acciones
 

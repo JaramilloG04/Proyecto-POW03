@@ -7,8 +7,32 @@ const campos = ["titulo", "area", "descripcion", "horario", "modalidad",
 const estados = ["disponible", "agendada", "completada", "cancelada"];
 
 function datosTutoria(body) {
-  return Object.fromEntries(campos.filter(campo => Object.hasOwn(body, campo))
-    .map(campo => [campo, body[campo]]));
+  const invalido = mensaje => { throw Object.assign(new Error(mensaje), { status: 400 }); };
+  if (!body || typeof body !== "object" || Array.isArray(body)) invalido("Envía un objeto JSON válido");
+  const datos = {};
+  const limites = { titulo: 120, area: 100, descripcion: 2000, horario: 200 };
+  for (const campo of Object.keys(body)) {
+    if (!campos.includes(campo)) invalido("Campo no permitido: " + campo);
+    const valor = body[campo];
+    if (Object.hasOwn(limites, campo)) {
+      if (typeof valor !== "string" || !valor.trim() || valor.trim().length > limites[campo])
+        invalido("El campo " + campo + " debe contener entre 1 y " + limites[campo] + " caracteres");
+      datos[campo] = valor.trim();
+    } else if (campo === "duracionHoras") {
+      if (!Number.isInteger(valor) || valor < 1 || valor > 4) invalido("La duración debe ser un entero entre 1 y 4 horas");
+      datos[campo] = valor;
+    } else if (campo === "cuposDisponibles") {
+      if (!Number.isSafeInteger(valor) || valor < 0) invalido("Los cupos deben ser un entero no negativo");
+      datos[campo] = valor;
+    } else if (campo === "modalidad") {
+      if (!["Virtual", "Presencial", "Híbrida"].includes(valor)) invalido("Modalidad inválida");
+      datos[campo] = valor;
+    } else if (campo === "estado") {
+      if (!estados.includes(valor)) invalido("Estado inválido");
+      datos[campo] = valor;
+    }
+  }
+  return datos;
 }
 
 function responderError(res, error) {

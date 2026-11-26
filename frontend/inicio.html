@@ -84,10 +84,10 @@
                 <h3 id="tutoriaEditorTitle" class="h6 fw-bold" tabindex="-1">Publicar tutoría</h3>
                 <p class="small muted-custom">Todos los campos son obligatorios.</p>
                 <div class="row g-3">
-                  <div class="col-md-6"><label for="tutoriaTitulo" class="form-label">Título</label><input class="form-control" id="tutoriaTitulo" name="titulo" required></div>
-                  <div class="col-md-6"><label for="tutoriaArea" class="form-label">Área</label><input class="form-control" id="tutoriaArea" name="area" required></div>
-                  <div class="col-12"><label for="tutoriaDescripcion" class="form-label">Descripción</label><textarea class="form-control" id="tutoriaDescripcion" name="descripcion" rows="3" required></textarea></div>
-                  <div class="col-md-6"><label for="tutoriaHorario" class="form-label">Horario</label><input class="form-control" id="tutoriaHorario" name="horario" required></div>
+                  <div class="col-md-6"><label for="tutoriaTitulo" class="form-label">Título</label><input class="form-control" id="tutoriaTitulo" name="titulo" maxlength="120" required></div>
+                  <div class="col-md-6"><label for="tutoriaArea" class="form-label">Área</label><input class="form-control" id="tutoriaArea" name="area" maxlength="100" required></div>
+                  <div class="col-12"><label for="tutoriaDescripcion" class="form-label">Descripción</label><textarea class="form-control" id="tutoriaDescripcion" name="descripcion" maxlength="2000" rows="3" required></textarea></div>
+                  <div class="col-md-6"><label for="tutoriaHorario" class="form-label">Horario</label><input class="form-control" id="tutoriaHorario" name="horario" maxlength="200" required></div>
                   <div class="col-md-6"><label for="tutoriaModalidad" class="form-label">Modalidad</label><select class="form-select" id="tutoriaModalidad" name="modalidad"><option>Virtual</option><option>Presencial</option><option>Híbrida</option></select></div>
                   <div class="col-md-4"><label for="tutoriaDuracion" class="form-label">Duración (horas)</label><input class="form-control" type="number" id="tutoriaDuracion" name="duracionHoras" min="1" max="4" step="1" value="1" required></div>
                   <div class="col-md-4"><label for="tutoriaCupos" class="form-label">Cupos disponibles</label><input class="form-control" type="number" id="tutoriaCupos" name="cuposDisponibles" min="0" step="1" value="5" required></div>

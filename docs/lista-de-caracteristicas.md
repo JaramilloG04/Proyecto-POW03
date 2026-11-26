@@ -1,6 +1,6 @@
 # Lista de características (FDD) — EDU-KT Free
 
-Entidad principal: Tutoría. Las características se redactan como acción, resultado y objeto. La lista conserva los conjuntos A, B y C obligatorios, más el complemento D.
+Entidad principal: Tutoría. Las características se redactan como acción, resultado y objeto. La lista conserva los conjuntos A, B y C obligatorios, más los complementos D y E.
 
 ## Trazabilidad
 
@@ -23,11 +23,14 @@ En la columna de archivos, los nombres abreviados de controladores y rutas corre
 | D1 | Consultar los usuarios de la comunidad | Admin obtiene lista real de cuentas | GET /api/auth/usuarios; auth.controller.js, admin.js | Jaramillo: a3a8a4c | Implementado; prueba pendiente |
 | D2 | Modificar el rol de un usuario | Admin cambia rol no administrativo; cuenta protegida no editable | PATCH /api/auth/usuarios/:id; auth.controller.js, admin.js | Jaramillo: a3a8a4c | Implementado; prueba pendiente |
 | D3 | Modificar el estado de una cuenta | Admin activa o desactiva cuentas no administrativas; cuenta inactiva pierde acceso | PATCH /api/auth/usuarios/:id; auth.controller.js, admin.js, auth.middleware.js | Jaramillo: a3a8a4c | Implementado; prueba pendiente |
+| E1 | Enviar una solicitud de tutoría | Estudiante/ambos crea solicitud pendiente propia y recibe 201 | POST /api/solicitudes; solicitudes.controller.js, solicitudes.js | Jaramillo: 5645c01 | Implementado; prueba pendiente |
+| E2 | Listar las solicitudes propias | Mostrar enviadas y recibidas sin consultar solicitudes ajenas | GET /api/solicitudes; solicitudes.controller.js, solicitudes.js | Jaramillo: 5645c01 | Implementado; prueba pendiente |
+| E3 | Modificar el estado de una solicitud | Tutor destinatario acepta, rechaza o completa; aceptación descuenta un cupo | PATCH /api/solicitudes/:id/estado; solicitudes.controller.js, solicitudes.js | Jaramillo: 5645c01 | Implementado; prueba pendiente |
 
 ## Proceso de desarrollo
 
 1. Modelo general: entidades Usuario, Tutoría y Solicitud, descritas en modelo-general.md.
-2. Lista y planificación: prioridad al CRUD A, autenticación B y autorización C; administración D como complemento.
+2. Lista y planificación: prioridad al CRUD A, autenticación B y autorización C; administración D y solicitudes E como complementos.
 3. Diseño y construcción: Express y Mongoose, cliente HTML/CSS/JavaScript, fetch y validaciones en ambas capas.
 4. Verificación: pruebas de aceptación por característica en pruebas-funcionales.md.
 
@@ -42,4 +45,6 @@ La rama Delgado contiene la base de arquitectura y autenticación integrada en J
 - [Registro](https://github.com/JaramilloG04/Proyecto-POW03/commit/4ff375b765167dca5a949d219fc68cdf1839141f)
 - [Administración](https://github.com/JaramilloG04/Proyecto-POW03/commit/a3a8a4cac863bde56484b02e0b82fa05e4ab35e3)
 
-Solicitudes, mensajería y banco de horas no se consideran funcionalidades completas: existen modelos o demostraciones, no el flujo persistente de extremo a extremo.
+- [Solicitudes y cupos](https://github.com/JaramilloG04/Proyecto-POW03/commit/5645c0195359188b5d04e06fe613faad6dad2e85)
+
+La mensajería, disponibilidad de ejemplo y banco de horas automático siguen pendientes. Las solicitudes tienen código de extremo a extremo, pendiente de prueba real.

@@ -58,9 +58,21 @@ Ejemplo de creación (POST /tutorias):
 }
 ```
 
-Título, área, descripción y horario son obligatorios. Modalidad: Virtual, Presencial o Híbrida. Duración: 1 a 4 horas. Cupos: no negativos. Estados: disponible, agendada, completada, cancelada. La interfaz envía todos los campos; el esquema tiene valores predeterminados para modalidad, duración, cupos y estado. El servidor devuelve la tutoría con su _id y tutor (nombre e identificador).
+Título (máx. 120), área (100), descripción (2000) y horario (200) son obligatorios. Modalidad: Virtual, Presencial o Híbrida. Duración: entero de 1 a 4 horas. Cupos: enteros no negativos. Estados: disponible, agendada, completada, cancelada. La interfaz envía todos los campos; el esquema tiene valores predeterminados para modalidad, duración, cupos y estado. El servidor devuelve la tutoría con su _id y tutor (nombre e identificador).
 
 Ejemplo de edición (PUT /tutorias/:id): `{"cuposDisponibles":8}`.
+
+## Solicitudes de tutorías
+
+| Método y ruta | Permiso | Éxito | Errores específicos |
+|---|---|---|---|
+| GET /solicitudes | Cuenta activa, solo solicitudes propias enviadas o recibidas | 200 | 401, 403, 500 |
+| POST /solicitudes | Estudiante o ambos | 201 | 400, 401, 403, 404, 409, 500 |
+| PATCH /solicitudes/:id/estado | Tutor/ambos/admin destinatario de la solicitud | 200 | 400, 401, 403, 404, 409, 500 |
+
+POST recibe `{"tutoria":"ID_DE_TUTORIA","temaReforzar":"Probabilidad","mensaje":"Quisiera practicar ejercicios de probabilidad."}`. El servidor deriva estudiante, tutor y horas; no permite una solicitud propia ni duplicada pendiente o aceptada. Tema: 1–120 caracteres; mensaje: 10–1000. La tutoría debe estar disponible, tener cupos y pertenecer a una cuenta activa habilitada como tutor.
+
+PATCH recibe `{"estado":"aceptada"}`, `{"estado":"rechazada"}` o `{"estado":"completada"}`. Transiciones: pendiente → aceptada/rechazada; aceptada → completada. Al aceptar se descuenta un cupo mediante una transacción; al rechazar no cambia la capacidad. No se realiza transferencia de banco de horas. Las solicitudes anteriores se conservan sin recalcular sus cupos. Las transacciones requieren una instancia MongoDB compatible.
 
 ## Códigos HTTP
 
@@ -78,4 +90,4 @@ Ejemplo de edición (PUT /tutorias/:id): `{"cuposDisponibles":8}`.
 
 ## Alcance y seguridad
 
-El flujo actual conserva el ID token de MSAL como credencial de la API para el proyecto académico. No es una arquitectura de autenticación de producción recomendada: migrar a access tokens propios de la API es una mejora pendiente. El enlace inicial de cuentas semilla por correo también debe revisarse antes de una publicación abierta. No hay endpoints funcionales de solicitudes o mensajería en esta versión.
+El flujo actual conserva el ID token de MSAL como credencial de la API para el proyecto académico. No es una arquitectura de autenticación de producción recomendada: migrar a access tokens propios de la API es una mejora pendiente. El enlace inicial de cuentas semilla por correo también debe revisarse antes de una publicación abierta. Las solicitudes sí tienen endpoints funcionales implementados; la mensajería y el intercambio automático de horas no.

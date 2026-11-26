@@ -27,6 +27,15 @@ Entorno: ejecutar el backend local con MongoDB Atlas y cuentas del tenant Micros
 | D2 | Cambiar rol de cuenta de prueba y recargar sesión | Rol actualizado; permisos correspondientes | Pendiente |
 | D3 | Desactivar cuenta de prueba y reactivarla | 403 al acceder mientras esté inactiva; acceso al reactivar | Pendiente |
 | D3.2 | Intentar modificar cuenta admin | 403 | Pendiente |
+| E1 | Estudiante solicita tutoría de otra cuenta activa | 201, pendiente; aparece en enviadas y recibidas | Pendiente |
+| E1.2 | Repetir solicitud activa, solicitar sin cupos o tutoría propia | 409 o 403 según el caso | Pendiente |
+| E2 | Usuario ajeno consulta su lista | No aparecen solicitudes de otros usuarios | Pendiente |
+| E3 | Tutor destinatario acepta solicitud pendiente | 200, estado aceptada, cupos disminuyen en uno | Pendiente |
+| E3.2 | Tutor rechaza solicitud pendiente | 200, cupos sin cambio | Pendiente |
+| E3.3 | Tutor completa una solicitud aceptada | 200, completada | Pendiente |
+| E3.4 | Usuario ajeno intenta cambiar estado | 403 | Pendiente |
+| E3.5 | Intentar aceptar dos solicitudes cuando solo queda un cupo | Solo una aceptación, segunda 409, cupos 0 | Pendiente |
+| E3.6 | Repetir aceptación o completar solicitud pendiente | 409, no cambia cupos | Pendiente |
 | UX | Navegar con teclado, probar móvil y modo oscuro | Foco visible, errores legibles y controles operables | Pendiente en nuevas pantallas |
 
 Registrar fecha, cuenta de prueba (sin contraseñas ni tokens), resultado observado y evidencia de pantalla en cada ejecución. No utilizar cuentas de compañeros para cambios sin autorización.
