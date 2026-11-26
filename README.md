@@ -1,7 +1,46 @@
 # Proyecto-POW03
 Plataforma de Defensa y Acceso Comunitario a la Educación ODS: Igualdad -- Acceso a la Educación -- Defensa de derechos civiles Contexto: Frente al riesgo de privatización y desfinanciamiento de la educación pública, esta plataforma sostiene redes de tutoría entre pares como bien común, resistiendo la mercantilización total del conocimiento.
 
+
+## Ejecución local
+
+**Requisitos:** Node.js 22.12 o superior (se recomienda una versión LTS compatible con Mongoose 9), npm, acceso autorizado a MongoDB Atlas y al directorio Microsoft Entra ID del proyecto.
+
+1. Clonar el repositorio y seleccionar la rama que se desea ejecutar (`Jaramillo` durante la integración).
+2. Abrir una terminal en la raíz del proyecto y entrar a `backend`.
+3. Copiar `.env.example` a `.env` (en PowerShell: `Copy-Item .env.example .env`; en Bash: `cp .env.example .env`). Completar con los valores autorizados del equipo. Si ya existe un `.env`, conservarlo. Nunca subir credenciales a GitHub.
+4. Ejecutar:
+
+```bash
+npm ci
+npm run dev
+```
+
+5. Abrir http://localhost:3000 y comprobar http://localhost:3000/api/health. Express sirve el cliente y la API desde el mismo origen. No abrir los HTML directamente ni utilizar Live Server para el flujo autenticado.
+
+En Entra ID, la aplicación debe admitir el flujo SPA de MSAL y tener registrada la URI de redirección `http://localhost:3000/login.html` (ajustar el origen si cambia el puerto). Atlas debe permitir la conexión desde el entorno autorizado. Una cuenta Microsoft del directorio puede registrarse como estudiante, tutor o ambos; las cuentas administrativas iniciales se provisionan por el equipo autorizado. No hay contraseñas locales.
+
+**Advertencia:** `npm run seed` elimina los usuarios, tutorías y solicitudes existentes antes de cargar datos iniciales. No ejecutarlo sobre la base compartida ni sobre información real.
+
+## Arquitectura y alcance
+
+Cliente HTML5, Bootstrap y JavaScript con fetch → API REST Express (autenticación y roles, rutas, controladores) → Mongoose → MongoDB Atlas. MSAL obtiene el ID token de Entra ID; el servidor comprueba firma, audiencia, emisor, tenant y vigencia, y consulta el rol y estado de la cuenta en MongoDB en cada petición protegida. El cierre de sesión local limpia sessionStorage; no revoca el token en Microsoft. Para producción se recomienda migrar la API a access tokens con audiencia y permisos propios y revisar el enlace de cuentas semilla sin identidad asignada.
+
+El CRUD principal es Tutoría. También se implementaron registro, perfil y administración de cuentas. La solicitud de tutorías, mensajería y algunos indicadores del panel principal todavía incluyen demostraciones; no se presentan como funcionalidades persistentes completas.
+
+## Documentación
+
+- [Lista de características FDD y trazabilidad](docs/lista-de-caracteristicas.md)
+- [API REST](docs/api.md)
+- [Matriz de roles y permisos](docs/roles-y-permisos.md)
+- [Modelo de datos](docs/modelo-general.md)
+- [Plan y evidencia de pruebas](docs/pruebas-funcionales.md)
+
+Los avances se integran directamente en Jaramillo mediante commits descriptivos. La entrega requiere ramas por característica y revisión con pull requests: este flujo de integración directo es una desviación del requisito, no evidencia de que se haya cumplido. La integración final a main está pendiente.
+
 ## Accesibilidad (WCAG 2.2)
+
+La siguiente tabla conserva el registro de las mejoras de la versión inicial del cliente. Algunas referencias a formularios simulados (correo y contraseña, cinco páginas y validación HTML) corresponden a esa versión, no a una auditoría actual del sistema integrado.
 
 Siguiendo la [Guía de Implementación WCAG 2.2](https://github.com/dfloaizab/WebProgramming/tree/main/2025A/Unidad3/Accesibility), en el sitio (`docs/`) se aplicaron los principios **1. Perceptible**, **2. Operable**, **3. Comprensible** y la pauta **4.1 Compatible**. En el código, comentarios como `<!-- 2.4.1 ... -->` o `/* 1.4.3 ... */` marcan dónde se aplica cada pauta.
 

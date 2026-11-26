@@ -1,5 +1,7 @@
 # Modelo General - EDU-KT Free
 
+El modelo Solicitud existe en MongoDB; su flujo web aún es una demostración. El rol ambos combina estudiante y tutor. Los usuarios también almacenan entraId y activo.
+
 Este documento describe cómo se organiza y guarda la información de la plataforma en la base de datos (**MongoDB Atlas**). La idea principal es separar el inicio de sesión (que se maneja de forma segura con **Microsoft Entra ID**) de los datos académicos y de las tutorías que usa la página en el día a día.
 
 ## Cómo se conectan los datos

@@ -6,15 +6,15 @@ En **EDU-KT Free** el acceso de los usuarios se gestiona a través de **Microsof
 
 1. **Estudiante:**
    - Puede explorar las tutorías disponibles en la comunidad y consultar sus detalles.
-   - Puede enviar solicitudes de acompañamiento a los tutores.
+   - La interfaz de solicitudes es una demostración pendiente de integración persistente.
    - Puede ver y actualizar la información de su propio perfil académico.
 
 2. **Tutor:**
-   - Además de consultar tutorías y gestionar su perfil, puede publicar su disponibilidad horaria.
+   - Además de consultar tutorías y gestionar su perfil, puede publicar tutorías. La disponibilidad del panel principal es una demostración.
    - Puede crear nuevas ofertas de tutoría, así como editar o eliminar únicamente las tutorías que él mismo haya publicado.
 
 3. **Administrador:**
-   - Tiene acceso completo para supervisar el funcionamiento de la plataforma.
+   - Puede supervisar cuentas no administrativas y todas las tutorías.
    - Puede gestionar los usuarios registrados y moderar (crear, editar o eliminar) cualquier tutoría publicada en la red.
 
 4. **Estudiante y tutor (ambos):** combina las funciones de estudiante y tutor; solo puede modificar o eliminar sus propias tutorías.
@@ -23,18 +23,19 @@ El rol inicial se elige durante el registro. Los cambios posteriores de rol y ac
 
 ## Qué puede hacer cada rol
 
-| Acción en la plataforma | Visitante (Sin sesión) | Estudiante | Tutor | Administrador |
-| :--- | :--- | :--- | :--- | :--- |
-| Ver la página de bienvenida e información general | Sí | Sí | Sí | Sí |
-| Iniciar sesión con Microsoft Entra ID | Sí | Sí | Sí | Sí |
-| Entrar al panel principal y ver su perfil | No (pide iniciar sesión) | Sí | Sí | Sí |
-| Consultar las tutorías disponibles y su detalle | No (pide iniciar sesión) | Sí | Sí | Sí |
-| Publicar disponibilidad horaria | No | No | Sí | Sí |
-| Crear una nueva tutoría | No | No | Sí | Sí |
-| Editar o eliminar una tutoría | No | No | Solo las propias | Sí (todas) |
-| Consultar y administrar la lista de usuarios | No | No | No | Sí |
-| Cambiar rol o estado de cuentas no administrativas | No | No | No | Sí |
-| Editar datos académicos del propio perfil (sin modificar rol) | No | Sí | Sí | Sí |
+| Operación | Visitante | Estudiante | Tutor | Ambos | Admin |
+|---|---|---|---|---|---|
+| Ver bienvenida, registrarse o iniciar sesión | Sí | Sí | Sí | Sí | Sí |
+| Consultar su perfil y actualizar datos académicos | No | Sí | Sí | Sí | Sí |
+| Listar y consultar tutorías | No | Sí | Sí | Sí | Sí |
+| Crear tutorías | No | No | Sí | Sí | Sí |
+| Editar o eliminar tutorías propias | No | No | Sí | Sí | Sí |
+| Editar o eliminar tutorías ajenas | No | No | No | No | Sí |
+| Consultar usuarios y entrar a administración | No | No | No | No | Sí |
+| Cambiar rol o estado de cuentas no administrativas | No | No | No | No | Sí |
+| Crear o editar cuentas administrativas desde la web | No | No | No | No | No |
+
+La eliminación de tutorías con solicitudes asociadas se restringe para todos los roles. La disponibilidad, las solicitudes y la mensajería del cliente aún no tienen un flujo persistente completo.
 
 ## Cómo protege el sistema las vistas y las acciones
 
