@@ -362,11 +362,14 @@ document.addEventListener("DOMContentLoaded", async () => {
       const selectRol = document.getElementById("roleRegister");
       const checkTerms = document.getElementById("terms");
       const btnRegister = document.getElementById("btnRegisterMicrosoft");
+      const errorRegistro = document.getElementById("registroError");
+      errorRegistro.hidden = true;
+      errorRegistro.textContent = "";
 
       if (!inputNombre.value.trim() || !selectRol.value || !checkTerms.checked) {
-        if (typeof window.notify === "function") {
-          window.notify("Completa tu nombre, selecciona cómo participarás y acepta los términos para continuar.");
-        }
+        errorRegistro.textContent = "Completa tu nombre, selecciona cómo participarás y acepta los términos para continuar.";
+        errorRegistro.hidden = false;
+        if (!inputNombre.value.trim()) inputNombre.focus();
         return;
       }
 
@@ -384,10 +387,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         }, 900);
       } catch (error) {
         if (btnRegister) btnRegister.disabled = false;
-        const errMsg = error.message || "No se pudo crear la cuenta con Microsoft";
-        if (typeof window.notify === "function") {
-          window.notify(errMsg);
-        }
+        errorRegistro.textContent = error.message || "No se pudo crear la cuenta con Microsoft";
+        errorRegistro.hidden = false;
       }
     });
   }
